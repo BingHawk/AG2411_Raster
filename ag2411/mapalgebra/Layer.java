@@ -5,9 +5,8 @@ public class Layer {
     public int nRows; 
     public int nCols;
     public double[] origin = new double[2];
-    public String coordSystem;
     public double resolution;
-    public double[] values[];
+    public double[][] values;
     public double nullValue = -9999; 
 
     public Layer(String name, String path){
