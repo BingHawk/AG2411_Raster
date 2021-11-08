@@ -1,5 +1,5 @@
 # AG2411_Raster
- Repo for task one in AG2411, 
+ Repo for Ex01 in AG2411, 
 
 ## Structure: 
 ag2411/mapalgebra contains the Layer calss and its methods. 
