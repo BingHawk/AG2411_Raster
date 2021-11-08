@@ -1,29 +1,84 @@
 package ag2411.mapalgebra;
+import java.util.*;
+import java.io.File;  // Import the File class
+import java.io.FileNotFoundException;  // class to handle errors
 
 public class Layer {
-    public String Name;
+    public String name;
     public int nRows; 
     public int nCols;
     public double[] origin = new double[2];
     public double resolution;
     public double[][] values;
-    public double nullValue = -9999; 
+    public double nullValue; 
 
-    public Layer(String name, String path){
-        // You may want to do some work before reading a file.
-        
+    public Layer(String layerName, String path){
+        name = layerName;
         try{
-            // Exception may be thrown whilereading (and writing) a file.
-            // Get access to the lines of Strings stored in the file
-            // Read first line, which starts with "ncols"
-            // Read second line, which starts with "nrows"
-            // Read third line, which starts with "xllcorner"
-            // Read forth line, which starts with "yllcorner"
-            // Read fifth line, which starts with "cellsize"
-            // Read sixth line, which starts with "NODATA_value"
-            // Readeach of the remaining lines, which representsa row of raster
-            // values
-        } catch(Exception e) {
+            File asciiIn = new File(path);
+            Scanner in = new Scanner(asciiIn);
+            while(in.hasNextLine() && !in.hasNextDouble()){
+                String data = in.nextLine();
+                String[] splited = data.split("\\s+");
+                switch(splited[0]){
+                    case "ncols":
+                        try{
+                            nCols = Integer.parseInt(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                        }
+                    case "nrows":
+                        try{
+                            nRows = Integer.parseInt(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                        }
+                    case "xllcorner":
+                        try{
+                            origin[0] = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                        }
+                    case "yllcorner":
+                        try{
+                            origin[1] = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                        }
+                    case "cellsize":
+                        try{
+                            resolution = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                        }
+                    case "nodata_value":
+                        try{
+                            nullValue = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                        }
+                    }           
+            }
+            values = new double[nRows][nCols];
+            int row = 0;
+            while(in.hasNextDouble() && row < nRows){
+                int col = 0;
+                while(in.hasNextDouble() && col < nCols){
+                    values[row][col] = in.nextDouble();
+                    col = col+1;
+                }
+                row = row +1;
+            }
+            in.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
             e.printStackTrace();
         }
     };
@@ -35,9 +90,9 @@ public class Layer {
         System.out.println("yllcorner     "+origin[1]);
         System.out.println("cellsize      "+resolution);
         System.out.println("NODATA_value  "+nullValue);
-        for(int i = 0; i < nRows; i++) {
-            for(int j = 0; j < nCols; j++) {
-                System.out.print(values[i*nCols+j]+" ");
+        for(double[] i: values){
+            for(double j: i){
+                System.out.print(j+" ");
             }
             System.out.println();
         }
