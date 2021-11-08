@@ -90,10 +90,9 @@ public class Layer {
         System.out.println("yllcorner     "+origin[1]);
         System.out.println("cellsize      "+resolution);
         System.out.println("NODATA_value  "+nullValue);
-        for(double[] i: values){
-            for(double j: i){
-                System.out.print(j+" ");
-            }
+        for(int i = 0; i < nRows; i++) {
+            for(int j = 0; j < nCols; j++) {
+                System.out.print(values[i*nCols+j]+" ");
             System.out.println();
         }
     };
