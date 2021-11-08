@@ -1,7 +1,7 @@
 # AG2411_Raster
  Repo for task one in AG2411, 
 
-##Structure: 
+## Structure: 
 ag2411/mapalgebra contains the Layer calss and its methods. 
 All mapalgebra function should be saved in this package
 
