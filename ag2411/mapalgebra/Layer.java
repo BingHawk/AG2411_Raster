@@ -27,6 +27,8 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     case "nrows":
                         try{
@@ -34,6 +36,8 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     case "xllcorner":
                         try{
@@ -41,6 +45,8 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     case "yllcorner":
                         try{
@@ -48,6 +54,8 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     case "cellsize":
                         try{
@@ -55,35 +63,56 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
-                    case "nodata_value":
+                    case "NODATA_value":
                         try{
                             nullValue = Double.parseDouble(splited[1]);
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     }           
             }
             
             values = new double[nRows][nCols];
             int row = 0;
-            while(in.hasNextDouble() && row < nRows){
+            while(in.hasNextDouble()){
                 //Test number of columns in row
                 String data = in.nextLine();
                 String[] splited = data.split("\\s+");
                 if(splited.length != nCols){
-                    System.out.println("ERROR: Metadata does not match.");
+                    System.out.println("ERROR: Metadata does not match data.");
                     System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
                     System.exit(0);
                 }
                 int col = 0;
-                while(in.hasNextDouble() && col < nCols){
-                    values[row][col] = in.nextDouble();
-                    col = col+1;
+                for(String i: splited){
+                    try{
+                        values[row][col] = Double.parseDouble(i);
+                        col = col +1;
+                    } 
+                    catch(ArrayIndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }
+                    catch(NumberFormatException e){
+                        System.out.println("ERROR: Wrong format in data: "+i);
+                        System.exit(0);
+                    }                            
+
                 }
                 row = row +1;
             }
+            if(row != nRows){
+                System.out.println("ERROR: Metadata does not match data.");
+                System.out.println("\tdata has " +row+" rows, "+nRows+" was expected.");
+                System.exit(0);
+            }
+
+
             in.close();
         }
         catch (FileNotFoundException e) {
