@@ -65,9 +65,18 @@ public class Layer {
                         }
                     }           
             }
+            
             values = new double[nRows][nCols];
             int row = 0;
             while(in.hasNextDouble() && row < nRows){
+                //Test number of columns in row
+                String data = in.nextLine();
+                String[] splited = data.split("\\s+");
+                if(splited.length != nCols){
+                    System.out.println("ERROR: Metadata does not match.");
+                    System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
+                    System.exit(0);
+                }
                 int col = 0;
                 while(in.hasNextDouble() && col < nCols){
                     values[row][col] = in.nextDouble();
