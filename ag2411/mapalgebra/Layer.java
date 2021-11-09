@@ -147,13 +147,25 @@ public class Layer {
             if (writeFile.createNewFile()) {
               System.out.println("File created: " + writeFile.getName());
             } else {
-              System.out.println("File already exists.");
+              System.out.println("File already exists. Owerwriting existing file");
             }
             FileWriter writer = new FileWriter(location);
-            writer.write("ncols         "+nCols);
+            writer.write("ncols         "+nCols+"\n");
+            writer.write("nrows         "+nRows+"\n");
+            writer.write("xllcorner     "+origin[0]+"\n");
+            writer.write("yllcorner     "+origin[1]+"\n");
+            writer.write("cellsize      "+resolution+"\n");
+            writer.write("NODATA_value  "+nullValue+"\n");
+            for(double[] i: values){
+                for(double j: i){
+                    writer.write(j+" ");
+                }
+                writer.write("\n");
+            }
 
-          } catch (IOException e) {
+            writer.close();
+        } catch (IOException e) {
             e.printStackTrace();
-
+        }
     };
 }
