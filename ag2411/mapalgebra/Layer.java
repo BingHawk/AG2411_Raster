@@ -1,7 +1,10 @@
 package ag2411.mapalgebra;
-import java.util.*;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.io.FileWriter;   // Import the FileWriter class
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // class to handle errors
+import java.io.IOException;
 
 public class Layer {
     public String name;
@@ -17,7 +20,9 @@ public class Layer {
         try{
             File asciiIn = new File(path);
             Scanner in = new Scanner(asciiIn);
-            while(in.hasNextLine() && !in.hasNextDouble()){
+            Pattern pattern = Pattern.compile("[A-Za-z_]*");
+
+            while(in.hasNextLine() && in.hasNext(pattern) ){
                 String data = in.nextLine();
                 String[] splited = data.split("\\s+");
                 switch(splited[0]){
@@ -27,6 +32,8 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     case "nrows":
                         try{
@@ -34,6 +41,8 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     case "xllcorner":
                         try{
@@ -41,6 +50,8 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     case "yllcorner":
                         try{
@@ -48,6 +59,8 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     case "cellsize":
                         try{
@@ -55,26 +68,57 @@ public class Layer {
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
-                    case "nodata_value":
+                    case "NODATA_value":
                         try{
                             nullValue = Double.parseDouble(splited[1]);
                         }
                         catch (NumberFormatException ex){
                             ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
                         }
                     }           
             }
+            
             values = new double[nRows][nCols];
             int row = 0;
-            while(in.hasNextDouble() && row < nRows){
+            while(in.hasNextLine()){
+                //Test number of columns in row
+                String data = in.nextLine();
+                data = data.replace(',','.');
+                String[] splited = data.split("\\s+");
+                if(splited.length != nCols){
+                    System.out.println("ERROR: Metadata does not match data.");
+                    System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
+                    System.exit(0);
+                }
                 int col = 0;
-                while(in.hasNextDouble() && col < nCols){
-                    values[row][col] = in.nextDouble();
-                    col = col+1;
+                for(String i: splited){
+                    try{
+                        values[row][col] = Double.parseDouble(i);
+                        col = col +1;
+                    } 
+                    catch(ArrayIndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }
+                    catch(NumberFormatException e){
+                        System.out.println("ERROR: Wrong format in data: "+i);
+                        System.exit(0);
+                    }                            
+
                 }
                 row = row +1;
             }
+            if(row != nRows){
+                System.out.println("ERROR: Metadata does not match data.");
+                System.out.println("\tdata has " +row+" rows, "+nRows+" was expected.");
+                System.exit(0);
+            }
+
+
             in.close();
         }
         catch (FileNotFoundException e) {
@@ -93,10 +137,35 @@ public class Layer {
         for(int i = 0; i < nRows; i++) {
             for(int j = 0; j < nCols; j++) {
                 System.out.print(values[i*nCols+j]+" ");
+            }
             System.out.println();
         }
     };
     public void save(String location){
+        try {
+            File writeFile = new File(location);
+            if (writeFile.createNewFile()) {
+              System.out.println("File created: " + writeFile.getName());
+            } else {
+              System.out.println("File already exists. Owerwriting existing file");
+            }
+            FileWriter writer = new FileWriter(location);
+            writer.write("ncols         "+nCols+"\n");
+            writer.write("nrows         "+nRows+"\n");
+            writer.write("xllcorner     "+origin[0]+"\n");
+            writer.write("yllcorner     "+origin[1]+"\n");
+            writer.write("cellsize      "+resolution+"\n");
+            writer.write("NODATA_value  "+nullValue+"\n");
+            for(double[] i: values){
+                for(double j: i){
+                    writer.write(j+" ");
+                }
+                writer.write("\n");
+            }
 
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     };
 }
