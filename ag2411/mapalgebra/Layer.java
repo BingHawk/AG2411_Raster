@@ -1,7 +1,10 @@
 package ag2411.mapalgebra;
-import java.util.*;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.io.FileWriter;   // Import the FileWriter class
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // class to handle errors
+import java.io.IOException;
 
 public class Layer {
     public String name;
@@ -17,7 +20,9 @@ public class Layer {
         try{
             File asciiIn = new File(path);
             Scanner in = new Scanner(asciiIn);
-            while(in.hasNextLine() && !in.hasNextDouble()){
+            Pattern pattern = Pattern.compile("[A-Za-z_]*");
+
+            while(in.hasNextLine() && in.hasNext(pattern) ){
                 String data = in.nextLine();
                 String[] splited = data.split("\\s+");
                 switch(splited[0]){
@@ -80,9 +85,10 @@ public class Layer {
             
             values = new double[nRows][nCols];
             int row = 0;
-            while(in.hasNextDouble()){
+            while(in.hasNextLine()){
                 //Test number of columns in row
                 String data = in.nextLine();
+                data = data.replace(',','.');
                 String[] splited = data.split("\\s+");
                 if(splited.length != nCols){
                     System.out.println("ERROR: Metadata does not match data.");
@@ -136,6 +142,18 @@ public class Layer {
         }
     };
     public void save(String location){
+        try {
+            File writeFile = new File(location);
+            if (writeFile.createNewFile()) {
+              System.out.println("File created: " + writeFile.getName());
+            } else {
+              System.out.println("File already exists.");
+            }
+            FileWriter writer = new FileWriter(location);
+            writer.write("ncols         "+nCols);
+
+          } catch (IOException e) {
+            e.printStackTrace();
 
     };
 }
