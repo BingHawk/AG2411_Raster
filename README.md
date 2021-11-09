@@ -17,3 +17,12 @@ Ex01.java contains code to run and test the Layer class.
 Location and reference system does not matter. 
 All input files are of exactly the same study area. 
 
+## Testrun: 
+1. compile the constructor in terminal with: 
+$ javac ag2411/mapalgebra/Layer.java
+2. compile testcode with
+$ javac test.java
+3. run with 
+$ java test.java
+
+Test will use raster3x4.txt.
