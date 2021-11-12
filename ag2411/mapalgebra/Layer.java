@@ -85,19 +85,19 @@ public class Layer {
             
             values = new double[nRows][nCols];
             int row = 0;
-            while(in.hasNextLine()){
+            while (in.hasNextLine()){
                 //Test number of columns in row
                 String data = in.nextLine();
                 data = data.replace(',','.');
                 String[] splited = data.split("\\s+");
-                if(splited.length != nCols){
+                if (splited.length != nCols){
                     System.out.println("ERROR: Metadata does not match data.");
                     System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
                     System.exit(0);
                 }
                 int col = 0;
-                for(String i: splited){
-                    try{
+                for (String i: splited){
+                    try {
                         values[row][col] = Double.parseDouble(i);
                         col = col +1;
                     } 
@@ -108,7 +108,6 @@ public class Layer {
                         System.out.println("ERROR: Wrong format in data: "+i);
                         System.exit(0);
                     }                            
-
                 }
                 row = row +1;
             }
@@ -134,9 +133,9 @@ public class Layer {
         System.out.println("yllcorner     "+origin[1]);
         System.out.println("cellsize      "+resolution);
         System.out.println("NODATA_value  "+nullValue);
-        for(int i = 0; i < nRows; i++) {
-            for(int j = 0; j < nCols; j++) {
-                System.out.print(values[i*nCols+j]+" ");
+        for(int i = 0; i < nRows; i++){
+            for(int j = 0; j<nCols; j++){
+                System.out.print(values[i][j]+" ");
             }
             System.out.println();
         }
