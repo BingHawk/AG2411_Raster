@@ -5,6 +5,9 @@ import java.io.FileWriter;   // Import the FileWriter class
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // class to handle errors
 import java.io.IOException;
+import java.awt.image.*;
+//import java.awt.image.BufferedImage;
+//import java.awt.image.WritableRaster;
 
 public class Layer {
     public String name;
@@ -14,6 +17,7 @@ public class Layer {
     public double resolution;
     public double[][] values;
     public double nullValue; 
+    public double[] minMax = { Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY };
 
     public Layer(String layerName, String path){
         name = layerName;
@@ -99,6 +103,11 @@ public class Layer {
                 for (String i: splited){
                     try {
                         values[row][col] = Double.parseDouble(i);
+                        if(values[row][col]>minMax[1]){
+                            minMax[1] = values[row][col];
+                        } else if(values[row][col]<minMax[0]) {
+                            minMax[0] = values[row][col];
+                        }
                         col = col +1;
                     } 
                     catch(ArrayIndexOutOfBoundsException e){
@@ -167,4 +176,43 @@ public class Layer {
             e.printStackTrace();
         }
     };
+
+    //Greyscale
+    public BufferedImage toImage(){
+        // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
+        // (corresponding to the number of columns)and a heightof30pixels
+        // (corresponding to the number of rows).
+        BufferedImage image = new BufferedImage(this.nCols, this.nRows, BufferedImage.TYPE_INT_RGB);
+        // The above image is empty. To colorthe image, you first need to get access to 
+        // itsraster, which is represented by the following object.
+        WritableRaster raster = image.getRaster();
+        // These statementsmake a grayscale value and assign it to the pixelat the
+        // top-left corner of the raster.
+        int[] color= new int[3];
+        color[0] = 128; // Red
+        color[1] = 128;// Green
+        color[2] = 128;// Blue
+        raster.setPixel(0, 0, color);// (19,0) is the pixel at the top-rightcorner.
+        // A for-loop statement can easily assign a color value to every cell.
+        return image;
+    }
+    public BufferedImage toImage(double[][] values){
+        // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
+        // (corresponding to the number of columns)and a heightof30pixels
+        // (corresponding to the number of rows).
+        BufferedImage image = new BufferedImage(this.nCols, this.nRows, BufferedImage.TYPE_INT_RGB);
+        // The above image is empty. To colorthe image, you first need to get access to 
+        // itsraster, which is represented by the following object.
+        WritableRaster raster = image.getRaster();
+        // These statementsmake a grayscale value and assign it to the pixelat the
+        // top-left corner of the raster.
+        int[] color= new int[3];
+        color[0] = 128; // Red
+        color[1] = 128;// Green
+        color[2] = 128;// Blue
+        raster.setPixel(19, 0, color);// (19,0) is the pixel at the top-rightcorner.
+        // A for-loop statement can easily assign a color value to every cell.
+        return image;
+    }
 }
+
