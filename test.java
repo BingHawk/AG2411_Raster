@@ -9,8 +9,8 @@ public class test {
 
         JFrame appFrame= new JFrame();
         int scale = 100;
-        double[] voi = {10,20};
-        MapPanel map = new MapPanel(testLayer.toImage(voi),scale);
+        //double[] voi = {10,20};
+        MapPanel map = new MapPanel(testLayer.toImage(),scale);
 
         Dimension dimension= new Dimension(scale * testLayer.nCols , scale * testLayer.nRows);
         map.setPreferredSize(dimension);

@@ -1,13 +1,15 @@
 package ag2411.mapalgebra;
-import java.util.Scanner;
-import java.util.regex.Pattern;
-import java.io.FileWriter;   // Import the FileWriter class
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // class to handle errors
+import java.io.FileWriter;   // Import the FileWriter class
 import java.io.IOException;
-import java.awt.image.*;
-//import java.awt.image.BufferedImage;
-//import java.awt.image.WritableRaster;
+import java.lang.Math;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Layer {
     public String name;
@@ -190,6 +192,9 @@ public class Layer {
         // top-left corner of the raster.
         
         double range = minMax[0] - minMax[1];
+        if(range == 0){
+            range = 1;
+        }
         int[] color= new int[3];
         for(int i = 0; i<nRows; i++){
             for(int j = 0; j<nCols; j++){
@@ -213,14 +218,30 @@ public class Layer {
         // top-left corner of the raster.
 
         double range = minMax[0] - minMax[1];
+        if(range == 0){
+            range = 1;
+        }
+       
+        //Build map with this runs random colours. 
+        Map<Double,int[]> colormap = new HashMap<Double,int[]>();
+        for(double i:voi ){
+            colormap.put(i,randomColor());
+        }
+        for (double i : colormap.keySet()) {
+            System.out.println(i);
+          }
+        for (int[] i : colormap.values()) {
+            System.out.println(i[0]+", "+i[1]+", "+i[2]);
+          }
+
         int[] color= new int[3];
         for(int i = 0; i<nRows; i++){
             for(int j = 0; j<nCols; j++){
                 if(inArr(voi,values[i][j])){
-                    color[0] = (int)((255/range) * (values[i][j]-minMax[0]) + 255); // Red
-                    color[1] = (int)((128/range) * (values[i][j]-minMax[0]) + 128);// Green
-                    color[2] = (int)((128/range) * (values[i][j]-minMax[0]) + 128);// Blue
-
+                    for(int k = 0;k<3;k++){
+                        color[k] = colormap.get(values[i][j])[k];
+                    }
+                    //System.out.println(values[i][j]+"\n"+color[0]+", "+color[1]+", "+color[2]);
                 } else {
                     color[0] = (int)((255/range) * (values[i][j]-minMax[0]) + 255); // Red
                     color[1] = (int)((255/range) * (values[i][j]-minMax[0]) + 255);// Green
@@ -239,6 +260,14 @@ public class Layer {
             }
         }
         return out;
+    }
+    private int[] randomColor(){
+        int[] color = new int[3];
+        for(int i = 0; i<3; i++){
+            color[i] = (int) (Math.random() * 255);
+            //System.out.println(color[i]);
+        }
+        return color;
     }
 }
 
