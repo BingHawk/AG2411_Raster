@@ -15,7 +15,7 @@ public class Layer {
     public int nCols;
     public double[] origin = new double[2];
     public double resolution;
-    public double[][] values;
+    public double[][] values; //values [row][col]
     public double nullValue; 
     public double[] minMax = { Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY };
 
@@ -188,15 +188,20 @@ public class Layer {
         WritableRaster raster = image.getRaster();
         // These statementsmake a grayscale value and assign it to the pixelat the
         // top-left corner of the raster.
+        
+        double range = minMax[0] - minMax[1];
         int[] color= new int[3];
-        color[0] = 128; // Red
-        color[1] = 128;// Green
-        color[2] = 128;// Blue
-        raster.setPixel(0, 0, color);// (19,0) is the pixel at the top-rightcorner.
-        // A for-loop statement can easily assign a color value to every cell.
+        for(int i = 0; i<nRows; i++){
+            for(int j = 0; j<nCols; j++){
+                color[0] = (int)((255/range) * (values[i][j]-minMax[0]) + 255); // Red
+                color[1] = (int)((255/range) * (values[i][j]-minMax[0]) + 255);// Green
+                color[2] = (int)((255/range) * (values[i][j]-minMax[0]) + 255);// Blue
+                raster.setPixel(j, i, color);
+            }
+        }
         return image;
     }
-    public BufferedImage toImage(double[][] values){
+    public BufferedImage toImage(double[] values){
         // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
         // (corresponding to the number of columns)and a heightof30pixels
         // (corresponding to the number of rows).

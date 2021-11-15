@@ -1,8 +1,24 @@
-import ag2411.mapalgebra.Layer;
+import ag2411.mapalgebra.*;
+import javax.swing.*;
+import java.awt.*;
+
 public class test {
     public static void main(String[] args) {
         Layer testLayer = new Layer("testar","./data/test/raster3x4.txt");
         testLayer.print();
+
+        JFrame appFrame= new JFrame();
+        int scale = 100;
+        MapPanel map = new MapPanel(testLayer.toImage(),scale);
+
+        Dimension dimension= new Dimension(scale * testLayer.nCols , scale * testLayer.nRows);
+        map.setPreferredSize(dimension);
+
+
+        appFrame.add(map);
+        appFrame.pack();
+        appFrame.setVisible(true);
+
         testLayer.save("./data/output/test.txt");
     }
     
