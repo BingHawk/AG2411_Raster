@@ -184,7 +184,7 @@ public class Layer {
         // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
         // (corresponding to the number of columns)and a heightof30pixels
         // (corresponding to the number of rows).
-        BufferedImage image = new BufferedImage(this.nCols, this.nRows, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
         // The above image is empty. To colorthe image, you first need to get access to 
         // itsraster, which is represented by the following object.
         WritableRaster raster = image.getRaster();
@@ -198,9 +198,10 @@ public class Layer {
         int[] color= new int[3];
         for(int i = 0; i<nRows; i++){
             for(int j = 0; j<nCols; j++){
-                color[0] = (int)((255/range) * (values[i][j]-minMax[0]) + 255); // Red
-                color[1] = (int)((255/range) * (values[i][j]-minMax[0]) + 255);// Green
-                color[2] = (int)((255/range) * (values[i][j]-minMax[0]) + 255);// Blue
+                int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
+                color[0] = grey; // Red
+                color[1] = grey; // Green
+                color[2] = grey; // Blue
                 raster.setPixel(j, i, color);
             }
         }
@@ -210,14 +211,14 @@ public class Layer {
         // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
         // (corresponding to the number of columns)and a heightof30pixels
         // (corresponding to the number of rows).
-        BufferedImage image = new BufferedImage(this.nCols, this.nRows, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
         // The above image is empty. To colorthe image, you first need to get access to 
         // itsraster, which is represented by the following object.
         WritableRaster raster = image.getRaster();
         // These statementsmake a grayscale value and assign it to the pixelat the
         // top-left corner of the raster.
 
-        double range = minMax[0] - minMax[1];
+        double range = minMax[1] - minMax[0];
         if(range == 0){
             range = 1;
         }
@@ -227,12 +228,6 @@ public class Layer {
         for(double i:voi ){
             colormap.put(i,randomColor());
         }
-        for (double i : colormap.keySet()) {
-            System.out.println(i);
-          }
-        for (int[] i : colormap.values()) {
-            System.out.println(i[0]+", "+i[1]+", "+i[2]);
-          }
 
         int[] color= new int[3];
         for(int i = 0; i<nRows; i++){
@@ -243,9 +238,11 @@ public class Layer {
                     }
                     //System.out.println(values[i][j]+"\n"+color[0]+", "+color[1]+", "+color[2]);
                 } else {
-                    color[0] = (int)((255/range) * (values[i][j]-minMax[0]) + 255); // Red
-                    color[1] = (int)((255/range) * (values[i][j]-minMax[0]) + 255);// Green
-                    color[2] = (int)((255/range) * (values[i][j]-minMax[0]) + 255);// Blue
+                    int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
+                    color[0] = grey; // Red
+                    color[1] = grey; // Green
+                    color[2] = grey; // Blue
+                    //(int)((255/range) * (values[i][j]-minMax[0]) + 255);
                 }
                 raster.setPixel(j, i, color);
             }
