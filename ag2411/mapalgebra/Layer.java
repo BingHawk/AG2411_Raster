@@ -1,263 +1,246 @@
-package ag2411.mapalgebra;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // class to handle errors
-import java.io.FileWriter;   // Import the FileWriter class
-import java.io.IOException;
-import java.lang.Math;
-import java.util.Scanner;
-import java.util.regex.Pattern;
-import java.util.Map;
+package kth.ag2411.mapalgebra;
+
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.awt.image.*;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class Layer {
-    public String name;
-    public int nRows; 
-    public int nCols;
-    public double[] origin = new double[2];
-    public double resolution;
-    public double[][] values; //values [row][col]
-    public double nullValue; 
-    public double[] minMax = { Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY };
 
-    public Layer(String layerName, String path){
-        name = layerName;
-        try{
-            File asciiIn = new File(path);
-            Scanner in = new Scanner(asciiIn);
-            Pattern pattern = Pattern.compile("[A-Za-z_]*");
+	// Attributes
+	public String name; // name of this layer
+	public int nRows; // number of rows
+	public int nCols; // number of columns
+	public double[] origin = new double[2]; // x,y-coordinates of lower-left corner
+	public double resolution; // cell size
+	public double[] [] values; // data. Alternatively, public double[][] values;
+	public double nullValue; // value designated as "No data"
 
-            while(in.hasNextLine() && in.hasNext(pattern) ){
-                String data = in.nextLine();
-                String[] splited = data.split("\\s+");
-                switch(splited[0]){
-                    case "ncols":
-                        try{
-                            nCols = Integer.parseInt(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "nrows":
-                        try{
-                            nRows = Integer.parseInt(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "xllcorner":
-                        try{
-                            origin[0] = Double.parseDouble(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "yllcorner":
-                        try{
-                            origin[1] = Double.parseDouble(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "cellsize":
-                        try{
-                            resolution = Double.parseDouble(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "NODATA_value":
-                        try{
-                            nullValue = Double.parseDouble(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    }           
-            }
-            
-            values = new double[nRows][nCols];
-            int row = 0;
-            while (in.hasNextLine()){
-                //Test number of columns in row
-                String data = in.nextLine();
-                data = data.replace(',','.');
-                String[] splited = data.split("\\s+");
-                if (splited.length != nCols){
-                    System.out.println("ERROR: Metadata does not match data.");
-                    System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
-                    System.exit(0);
-                }
-                int col = 0;
-                for (String i: splited){
-                    try {
-                        values[row][col] = Double.parseDouble(i);
-                        if(values[row][col]>minMax[1]){
-                            minMax[1] = values[row][col];
-                        } else if(values[row][col]<minMax[0]) {
-                            minMax[0] = values[row][col];
-                        }
-                        col = col +1;
-                    } 
-                    catch(ArrayIndexOutOfBoundsException e){
-                        e.printStackTrace();
-                    }
-                    catch(NumberFormatException e){
-                        System.out.println("ERROR: Wrong format in data: "+i);
-                        System.exit(0);
-                    }                            
-                }
-                row = row +1;
-            }
-            if(row != nRows){
-                System.out.println("ERROR: Metadata does not match data.");
-                System.out.println("\tdata has " +row+" rows, "+nRows+" was expected.");
-                System.exit(0);
-            }
+	//Constructors
+	public Layer(String layerName, String fileName) {	// Constructor - same name as class (Layer in this case).
+		//System.exit(0);
+		// You may want to do some work before reading a file.
+
+		try { // Exception may be thrown while reading (and writing) a file.
+
+			// ----- ----- READER - first 6 lines ----- -----
+						File rFile = new File(fileName);						// This object represents an input file, elevation.txt, located at ./data/.
+						FileReader fReader = new FileReader(rFile);				// This object represents a stream of characters read from the file.
+						BufferedReader bReader = new BufferedReader(fReader); 	// This object represents lines of Strings created from the stream of characters.
+						String eachLine;
+						eachLine = bReader.readLine().substring(5).trim();	// Start reading from index 14 (place 15)
+						nCols = Integer.parseInt(eachLine);
+						eachLine = bReader.readLine().substring(5).trim();
+						nRows = Integer.parseInt(eachLine);
+						eachLine = bReader.readLine().substring(9).trim();
+						origin[0] = Double.parseDouble(eachLine);
+						eachLine = bReader.readLine().substring(9).trim();
+						origin[1] = Double.parseDouble(eachLine);
+						eachLine = bReader.readLine().substring(8).trim();
+						resolution = Integer.parseInt(eachLine);
+						eachLine = bReader.readLine().substring(12).trim();
+						nullValue = Double.parseDouble(eachLine);
+						// ----- ----- READER - first 6 lines ----- -----
 
 
-            in.close();
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    };
-    public void print(){
-        //Print this layer to console
-        System.out.println("ncols         "+nCols);
-        System.out.println("nrows         "+nRows);
-        System.out.println("xllcorner     "+origin[0]);
-        System.out.println("yllcorner     "+origin[1]);
-        System.out.println("cellsize      "+resolution);
-        System.out.println("NODATA_value  "+nullValue);
-        for(int i = 0; i < nRows; i++){
-            for(int j = 0; j<nCols; j++){
-                System.out.print(values[i][j]+" ");
-            }
-            System.out.println();
-        }
-    };
-    public void save(String location){
-        try {
-            File writeFile = new File(location);
-            if (writeFile.createNewFile()) {
-              System.out.println("File created: " + writeFile.getName());
-            } else {
-              System.out.println("File already exists. Owerwriting existing file");
-            }
-            FileWriter writer = new FileWriter(location);
-            writer.write("ncols         "+nCols+"\n");
-            writer.write("nrows         "+nRows+"\n");
-            writer.write("xllcorner     "+origin[0]+"\n");
-            writer.write("yllcorner     "+origin[1]+"\n");
-            writer.write("cellsize      "+resolution+"\n");
-            writer.write("NODATA_value  "+nullValue+"\n");
-            for(double[] i: values){
-                for(double j: i){
-                    writer.write(j+" ");
-                }
-                writer.write("\n");
-            }
+						// Creating a 2-dim matix (array of arrays)
+						values = new double [nRows][nCols];
 
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    };
+						/*
+						 * // ----- ----- READER - values ----- ----- eachLine =
+						 * bReader.readLine().replace(",", "."); // Reusing the string named temp, and
+						 * replacing it with the first row of values. for (int l =0; l < nRows -1;l++) {
+						 * String temptemp = bReader.readLine().replace(",", "."); eachLine = eachLine +
+						 * temptemp; } String[] stringarray = eachLine.split(" "); // ----- ----- READER
+						 * - values ----- -----
+						 * 
+						 * // ----- TEST: Content of stringarray ----- REMOVE LATER int r=(nRows - 1) *
+						 * (nCols - 1); // r anv�nds f�r att g�ra printen under allm�n for (int m =0; m
+						 * < r; m++) { System.out.println("Stringarray [" + m + "]: "+ stringarray[m]);
+						 * } // ----- TEST: Content of stringarray -----
+						 */
 
-    //Greyscale
-    public BufferedImage toImage(){
-        // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
-        // (corresponding to the number of columns)and a heightof30pixels
-        // (corresponding to the number of rows).
-        BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
-        // The above image is empty. To colorthe image, you first need to get access to 
-        // itsraster, which is represented by the following object.
-        WritableRaster raster = image.getRaster();
-        // These statementsmake a grayscale value and assign it to the pixelat the
-        // top-left corner of the raster.
-        
-        double range = minMax[0] - minMax[1];
-        if(range == 0){
-            range = 1;
-        }
-        int[] color= new int[3];
-        for(int i = 0; i<nRows; i++){
-            for(int j = 0; j<nCols; j++){
-                int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
-                color[0] = grey; // Red
-                color[1] = grey; // Green
-                color[2] = grey; // Blue
-                raster.setPixel(j, i, color);
-            }
-        }
-        return image;
-    }
-    public BufferedImage toImage(double[] voi) {
-        // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
-        // (corresponding to the number of columns)and a heightof30pixels
-        // (corresponding to the number of rows).
-        BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
-        // The above image is empty. To colorthe image, you first need to get access to 
-        // itsraster, which is represented by the following object.
-        WritableRaster raster = image.getRaster();
-        // These statementsmake a grayscale value and assign it to the pixelat the
-        // top-left corner of the raster.
+						for (int i=0; i < nRows; i++) {
+							eachLine = bReader.readLine().replace(",", ".");
+							String[] stringarray = eachLine.split(" ");
+							for (int j = 0; j < nCols; j++) {
+								//int k = i*nCols + j;
+								values [i] [j] = Double.parseDouble(stringarray[j]); 
+							}
+						}
+						bReader.close();
 
-        double range = minMax[1] - minMax[0];
-        if(range == 0){
-            range = 1;
-        }
-       
-        //Build map with this runs random colours. 
-        Map<Double,int[]> colormap = new HashMap<Double,int[]>();
-        for(double i:voi ){
-            colormap.put(i,randomColor());
-        }
+		} 
+		catch (Exception e) {		// Exception
+			System.out.println("Error");
+			
+			e.printStackTrace();
+			
+			System.exit(0);
+		}
+	}
 
-        int[] color= new int[3];
-        for(int i = 0; i<nRows; i++){
-            for(int j = 0; j<nCols; j++){
-                if(inArr(voi,values[i][j])){
-                    for(int k = 0;k<3;k++){
-                        color[k] = colormap.get(values[i][j])[k];
-                    } raster.setPixel(j, i, color);
-                }
-                
-            }
-        }
-        return image;
-    }
-    private boolean inArr(double[] arr, double x){
-        boolean out = false;
-        for(double i : arr){
-            if(i == x){
-                out = true;
-            }
-        }
-        return out;
-    }
-    private int[] randomColor(){
-        int[] color = new int[3];
-        for(int i = 0; i<3; i++){
-            color[i] = (int) (Math.random() * 255);
-            //System.out.println(color[i]);
-        }
-        return color;
-    }
+	// Methods
+	// Print
+	public void print(){
+
+		//Print this layer to console
+		System.out.println("ncols "+nCols);
+		System.out.println("nrows "+nRows);
+		System.out.println("xllcorner "+origin[0]);
+		System.out.println("yllcorner "+origin[1]);
+		System.out.println("cellsize "+resolution);
+		System.out.println("NODATA_value " + nullValue);
+
+
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				System.out.print(values[i][j]+" "); // Re-worked for 2-dim array. 
+			}
+			System.out.println(); 
+		}
+
+
+	}
+
+	public void save(String outputFileName) {
+		// save this layer as an ASCII file that can be imported to ArcGIS
+
+		try {
+			// This object represents an output file, out.txt, located at ./data/.
+			File file = new File(outputFileName);
+			// This object represents ASCII data (to be) stored in the file
+			FileWriter fWriter = new FileWriter(file);
+			// Write to the file
+			fWriter.write("ncols         "+ nCols + "\n"); // "\n" represents a new line
+			fWriter.write("nrows         "+ nRows + "\n"); 
+			fWriter.write("xllcorner     "+ origin[0] + "\n");
+			fWriter.write("yllcorner     "+ origin[1] + "\n");
+			fWriter.write("cellsize      "+ resolution + "\n"); 
+			fWriter.write("NODATA_value  "+ nullValue + "\n");
+
+			for (int n = 0; n < nRows; n++) {
+				for (int p = 0; p < nCols; p++) {
+					fWriter.write(values [n] [p] + " ");
+				}
+				fWriter.write("\n");
+
+			}
+			fWriter.close();
+		}
+
+		catch (Exception e) {		// Exception
+			System.out.println("Error");
+			e.printStackTrace();
+		}
+
+	}
+	
+	private double getMax() {
+		double max = Double.NEGATIVE_INFINITY;
+		for (int i = 0; i < nRows; i++) {
+			for (int j = 0; j < nCols; j++) {
+				if (values[i][j] > max) {
+					max = values[i][j];
+				}
+			}
+		}
+		return max;
+	}
+	
+	private double getMin() {
+		double min = Double.POSITIVE_INFINITY;
+		for (int i = 0; i < nRows; i++) {
+			for (int j = 0; j < nCols; j++) {
+				if (values[i][j] < min) {
+					min = values[i][j];
+				}
+			}
+		}
+		return min;
+	}
+	
+	
+	//BufferedImage
+	public BufferedImage toImage() {
+		// This object represents a 24-bit RBG image with a width of 20 pixels
+		// (corresponding to the number of columns) and a height of 30 pixels
+		// (corresponding to the number of rows).
+		BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
+
+		WritableRaster raster = image.getRaster();
+		
+		double min = getMin();
+		double max = getMax();
+	
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				double [] color = new double[3];
+				double range = max - min;
+				double pixel_greyscale = (values[i][j] - min ) * 255 / range;
+				color[0] = pixel_greyscale; // Red
+				color[1] = pixel_greyscale; // Green
+				color[2] = pixel_greyscale; // Blue
+				raster.setPixel(j, i, color); // (19,0) is the pixel at the top-right corner.
+			}
+		}		
+		return image;
+	}
+	
+
+	//BufferedImage
+	public BufferedImage toImage(double vois[]) {
+		// This object represents a 24-bit RBG image with a width of 20 pixels
+		// (corresponding to the number of columns) and a height of 30 pixels
+		// (corresponding to the number of rows).
+		BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
+
+		WritableRaster raster = image.getRaster();
+		
+		double min = getMin();
+		double max = getMax();
+		
+		HashMap<Double, int[]> voi2color = new HashMap<Double, int[]>();
+		for (int i=0; i < vois.length; i++) {
+			int [] color = new int[3];
+			int upper = 255;
+			Random random = new Random();
+			color[0] = random.nextInt(upper); // Red
+			color[1] = random.nextInt(upper); // Green
+			color[2] = random.nextInt(upper); // Blue
+			voi2color.put(vois[i], color);
+		}
+		
+		
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				for (int k = 0; k < vois.length; k++) {
+					if (values[i][j] != vois[k]) {
+						double [] color = new double[3];
+						double range = max - min;
+						double pixel_greyscale = (values[i][j] - min ) * 255 / range;
+						color[0] = pixel_greyscale; // Red
+						color[1] = pixel_greyscale; // Green
+						color[2] = pixel_greyscale; // Blue
+						
+						raster.setPixel(j, i, color); // (19,0) is the pixel at the top-right corner.
+					}
+					else {
+						raster.setPixel(j, i, voi2color.get(vois[k]));
+						break;
+					}
+				}
+			}
+		}		
+		return image;
+	}
 }
 
