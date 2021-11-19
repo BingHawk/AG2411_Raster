@@ -9,6 +9,7 @@ import java.awt.image.*;
 import java.util.HashMap;
 import java.util.Random;
 
+
 public class Layer {
 
 	// Attributes
