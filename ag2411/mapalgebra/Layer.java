@@ -206,8 +206,6 @@ public class Layer {
 		}		
 		return image;
 	}
-	
-
 	//BufferedImage
 	public BufferedImage toImage(double vois[]) {
 		// This object represents a 24-bit RBG image with a width of 20 pixels
@@ -311,5 +309,49 @@ public class Layer {
 		return nbh;
 	}
 	
+	
+	public Layer zonalMinimum(Layer zoneLayer, String outLayerName) {
+	//Test that dimensions match
+		if(nRows != zoneLayer.nRows || nCols != zoneLayer.nCols || resolution != zoneLayer.resolution){
+			System.out.println("Columns, Rows or resolution does not match");
+			System.exit(0);
+		} 
+
+		//Creating and Pupulating a hashmap with lowest value for each zone. Key: zone, Value: lowest value in zone
+		//if a there is a nullValue in the zone, it will return the lowest value of the other values in same zone
+		HashMap<Double, Double> smallest = new HashMap<Double, Double>();
+		for(int i = 0; i< nRows; i++){
+			for (int j = 0;j<nCols; j++){
+				if ((values[i][j] != nullValue) && (zoneLayer.values[i][j] != zoneLayer.nullValue)){
+					System.out.println(zoneLayer.values[i][j]+" "+zoneLayer.nullValue);
+
+					if(smallest.containsKey(zoneLayer.values[i][j])){
+						if(values[i][j] < smallest.get(zoneLayer.values[i][j])){
+							smallest.put(zoneLayer.values[i][j], values[i][j]);
+						}
+					} else {
+						smallest.put(zoneLayer.values[i][j], values[i][j]);
+					}
+				} else if(zoneLayer.values[i][j] == zoneLayer.nullValue){
+					System.out.println("nullValue detected");
+					smallest.put(nullValue,nullValue); //adding NullValue to pixels that has no zone
+				}
+			}
+
+		}
+
+		//writing values to new layer
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+		System.out.println(smallest);
+		for(int i = 0; i< nRows; i++){
+			for (int j = 0;j<nCols; j++){
+				//System.out.println(zoneLayer.values[i][j]);
+				outLayer.values[i][j] = smallest.get((double) zoneLayer.values[i][j]);
+			}
+		}
+		return outLayer;
+
+	}
 }
+
 
