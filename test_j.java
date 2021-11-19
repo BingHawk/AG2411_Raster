@@ -14,6 +14,14 @@ public class test_j {
         int j = 1;
         int r = 1;
         boolean isSquare = true;
-        int nbh [][] = new testLayer.getNeighborhood(int i, int j, int r, boolean isSquare);
+        int[][] nbh = testLayer.getNeighborhood(i, j, r, isSquare);
 
+        for (int[] val:nbh){
+            for (int index: val){
+                System.out.print(index+", ");
+            }
+            System.out.println();
+        }
+        
+    }
 }
