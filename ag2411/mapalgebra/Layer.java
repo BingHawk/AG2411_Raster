@@ -227,7 +227,6 @@ public class Layer {
         Map<Double,int[]> colormap = new HashMap<Double,int[]>();
         for(double i:voi ){
             colormap.put(i,randomColor());
-            
         }
 
         int[] color= new int[3];
