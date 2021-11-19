@@ -285,12 +285,12 @@ public class Layer {
 	
 		int n = 4*r*(r+1)+1;
 
-		int [][] nbh = new int[n+1][2]; //[ [i1][j1],[i2][j2] ]
+		int [][] nbh = new int[n][2]; //[ [i1][j1],[i2][j2] ]
 
 		// Ta fram kvadrat. ---> Lägg till undantagsfall: EDGES <---
 		for (int k = i-r; k <= i+r; k++) { 
 			for (int l = j-r; l <= j+r; l++) {
-				for (int m =0; m < 4*r*(r+1)+1; m++)
+				for (int m =0; m < n; m++)
 				
 				// Om vi vill ha cirkel tar vi bort hörnen.
 				if (isSquare == false) {
