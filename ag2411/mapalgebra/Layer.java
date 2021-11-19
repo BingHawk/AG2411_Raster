@@ -1,4 +1,4 @@
-package ag2411.mapalgebra;
+package kth.ag2411.mapalgebra;
 
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -6,11 +6,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.awt.image.*;
 
-/*import javax.swing.ImageIcon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.util.Map;*/
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Layer {
@@ -257,11 +257,5 @@ public class Layer {
 		}		
 		return image;
 	}
-
-	// Localsum
-
-	// focalVariety
-
-	// getNeighborhood
 }
 
