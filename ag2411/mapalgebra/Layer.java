@@ -237,7 +237,6 @@ public class Layer {
                         color[k] = colormap.get(values[i][j])[k];
                     } raster.setPixel(j, i, color);
                 }
-                
             }
         }
         return image;
@@ -247,6 +246,7 @@ public class Layer {
         for(double i : arr){
             if(i == x){
                 out = true;
+                break;
             }
         }
         return out;
