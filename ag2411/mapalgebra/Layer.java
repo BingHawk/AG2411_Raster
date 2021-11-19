@@ -253,7 +253,7 @@ public class Layer {
 		return image;
 	}
 
-	/*public Layer localSum(Layer inLayer, String outLayerName){
+	public Layer localSum(Layer inLayer, String outLayerName){
 		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
 		resolution, nullValue);
 
@@ -268,12 +268,12 @@ public class Layer {
 				outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
 				
 				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
-				if (values[i][j] == nullValue || inlayer.values[i][j] == nullValue)
+				if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
 					outLayer.values[i][j] = nullValue;
 			}
 		}
 		return outLayer;
-	}*/
+	}
 
 	/*public Layer focalVariety(int r, boolean IsSquare, String outLayerName) {
 		int nbh = new getNeighborhood(int i, int j, int r, boolean isSquare);
