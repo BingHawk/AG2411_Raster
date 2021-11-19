@@ -88,6 +88,16 @@ public class Layer {
 		}
 	}
 
+	public Layer(String name, int nRows, int nCols, double[] origin, double resolution, double nullValue) {
+        // construct a new layer by assigning a value to each of its attributes
+        this.name= name;// on the left hand side are the attributes of
+        this.nRows= nRows;// the new layer;
+        this.nCols= nCols;
+		this.origin= origin;
+		this.resolution= resolution;
+		this.nullValue=nullValue;
+		// on the right hand side are the parameters.// to be continued...}
+	}
 	// Methods
 	// Print
 	public void print(){
@@ -100,12 +110,17 @@ public class Layer {
 		System.out.println("cellsize "+resolution);
 		System.out.println("NODATA_value " + nullValue);
 
-
-		for (int i = 0; i < nRows; i++) { 
-			for (int j = 0; j < nCols; j++) {
-				System.out.print(values[i][j]+" "); // Re-worked for 2-dim array. 
+		try{
+			for (int i = 0; i < nRows; i++) { 
+				for (int j = 0; j < nCols; j++) {
+					System.out.print(values[i][j]+" "); // Re-worked for 2-dim array. 
+				}
+				System.out.println(); 
 			}
-			System.out.println(); 
+		}
+		catch(java.lang.NullPointerException e){
+			System.out.println("No data to print");
+
 		}
 
 

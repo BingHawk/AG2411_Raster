@@ -5,6 +5,11 @@ import java.awt.*;
 public class test {
     public static void main(String[] args) {
         Layer testLayer = new Layer("testar","./data/test/raster3x4.txt");
+
+        double[] origin = {0,0};
+        Layer constructLayer = new Layer("constructTest", 3, 2, origin, 1.0, -9999);
+        constructLayer.print();
+
         testLayer.print();
 
         JFrame appFrame= new JFrame();

@@ -1,9 +1,6 @@
-package kth.ag2411.mapalgebra;
+package ag2411.mapalgebra;
 
 import javax.swing.JFrame;
-import javax.swing.JTextArea;
-import javax.swing.border.Border;
-import javax.swing.*;
 
 public class Ex02 {
 	public static void main(String[] args) {
@@ -46,13 +43,13 @@ public class Ex02 {
 			}
 			
 			JFrame appFrame = new JFrame();
-			MapPanel mp = new MapPanel(layer.toImage(vois), scaleInt);		//args2 här
+			MapPanel mp = new MapPanel(layer.toImage(vois), scaleInt);		//args2 hï¿½r
 			appFrame.add(mp);
 			appFrame.setVisible(true);
 			appFrame.setExtendedState(appFrame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 			
 			JFrame appFrame1 = new JFrame();
-			MapPanel mp1 = new MapPanel(layer.toImage(), scaleInt);		//args2 här
+			MapPanel mp1 = new MapPanel(layer.toImage(), scaleInt);		//args2 hï¿½r
 			appFrame1.add(mp1);
 			appFrame1.setVisible(true);
 			appFrame1.setExtendedState(appFrame1.getExtendedState()|JFrame.MAXIMIZED_BOTH);
