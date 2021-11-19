@@ -33,6 +33,7 @@ public class Ex02 {
     
             appFrame.add(map);
             appFrame.pack();
+            appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             appFrame.setVisible(true);
 
 

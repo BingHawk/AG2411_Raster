@@ -235,16 +235,9 @@ public class Layer {
                 if(inArr(voi,values[i][j])){
                     for(int k = 0;k<3;k++){
                         color[k] = colormap.get(values[i][j])[k];
-                    }
-                    //System.out.println(values[i][j]+"\n"+color[0]+", "+color[1]+", "+color[2]);
-                } else {
-                    int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
-                    color[0] = grey; // Red
-                    color[1] = grey; // Green
-                    color[2] = grey; // Blue
-                    //(int)((255/range) * (values[i][j]-minMax[0]) + 255);
+                    } raster.setPixel(j, i, color);
                 }
-                raster.setPixel(j, i, color);
+                
             }
         }
         return image;
