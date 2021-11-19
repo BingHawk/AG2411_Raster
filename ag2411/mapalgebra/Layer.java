@@ -106,12 +106,17 @@ public class Layer {
 		System.out.println("cellsize "+resolution);
 		System.out.println("NODATA_value " + nullValue);
 
-
-		for (int i = 0; i < nRows; i++) { 
-			for (int j = 0; j < nCols; j++) {
-				System.out.print(values[i][j]+" "); // Re-worked for 2-dim array. 
+		try{
+			for (int i = 0; i < nRows; i++) { 
+				for (int j = 0; j < nCols; j++) {
+					System.out.print(values[i][j]+" "); // Re-worked for 2-dim array. 
+				}
+				System.out.println(); 
 			}
-			System.out.println(); 
+		}
+		catch(java.lang.NullPointerException e){
+			System.out.println("No data to print");
+
 		}
 
 
