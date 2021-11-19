@@ -92,6 +92,7 @@ public class Layer {
 		this.origin= origin;
 		this.resolution= resolution;
 		this.nullValue=nullValue;
+		this.values = new double [nRows][nCols];
 		// on the right hand side are the parameters.// to be continued...}
 	}
 	// Methods
@@ -275,8 +276,10 @@ public class Layer {
 		//if a there is a nullValue in the zone, it will return the lowest value of the other values in same zone
 		HashMap<Double, Double> smallest = new HashMap<Double, Double>();
 		for(int i = 0; i< nRows; i++){
-			for (int j = 0;i<nCols; j++){
-				if (values[i][j] != nullValue && zoneLayer.values[i][j] != zoneLayer.nullValue){
+			for (int j = 0;j<nCols; j++){
+				if ((values[i][j] != nullValue) && (zoneLayer.values[i][j] != zoneLayer.nullValue)){
+					System.out.println(zoneLayer.values[i][j]+" "+zoneLayer.nullValue);
+
 					if(smallest.containsKey(zoneLayer.values[i][j])){
 						if(values[i][j] < smallest.get(zoneLayer.values[i][j])){
 							smallest.put(zoneLayer.values[i][j], values[i][j]);
@@ -284,7 +287,8 @@ public class Layer {
 					} else {
 						smallest.put(zoneLayer.values[i][j], values[i][j]);
 					}
-				} else if(zoneLayer.values[i][j] != zoneLayer.nullValue){
+				} else if(zoneLayer.values[i][j] == zoneLayer.nullValue){
+					System.out.println("nullValue detected");
 					smallest.put(nullValue,nullValue); //adding NullValue to pixels that has no zone
 				}
 			}
@@ -293,9 +297,11 @@ public class Layer {
 
 		//writing values to new layer
 		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+		System.out.println(smallest);
 		for(int i = 0; i< nRows; i++){
-			for (int j = 0;i<nCols; j++){
-				outLayer.values[i][j] = smallest.get(zoneLayer.values[i][j]);
+			for (int j = 0;j<nCols; j++){
+				//System.out.println(zoneLayer.values[i][j]);
+				outLayer.values[i][j] = smallest.get((double) zoneLayer.values[i][j]);
 			}
 		}
 		return outLayer;
