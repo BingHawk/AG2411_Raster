@@ -92,6 +92,7 @@ public class Layer {
 		this.origin= origin;
 		this.resolution= resolution;
 		this.nullValue=nullValue;
+		this.values = new double [nRows][nCols];
 		// on the right hand side are the parameters.// to be continued...}
 	}
 	// Methods
@@ -254,15 +255,61 @@ public class Layer {
 		return image;
 	}
 
-	public Layer localSum(Layer inLayer, String outLayerName){
+	/*public Layer localSum(Layer inLayer, String outLayerName){
 		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
 		resolution, nullValue);
+
+		// Check that resolution are the same.
+		if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+            System.out.println("Columns, Rows or resolution does not match");
+            System.exit(0);
+        }
+
 		for (int i = 0; i < nRows; i++) { 
 			for (int j = 0; j < nCols; j++) {
 				outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
+				
+				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+				if (values[i][j] == nullValue || inlayer.values[i][j] == nullValue)
+					outLayer.values[i][j] = nullValue;
 			}
 		}
 		return outLayer;
+	}*/
+
+	/*public Layer focalVariety(int r, boolean IsSquare, String outLayerName) {
+		int nbh = new getNeighborhood(int i, int j, int r, boolean isSquare);
+
+	}*/
+	
+	// Ska va private
+	public int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
+	
+		int n = 4*r*(r+1)+1;
+
+		int [][] nbh = new int[n+1][2]; //[ [i1][j1],[i2][j2] ]
+
+		// Ta fram kvadrat. ---> Lägg till undantagsfall: EDGES <---
+		for (int k = i-r; k <= i+r; k++) { 
+			for (int l = j-r; l <= j+r; l++) {
+				for (int m =0; m < 4*r*(r+1)+1; m++)
+				
+				// Om vi vill ha cirkel tar vi bort hörnen.
+				if (isSquare == false) {
+					if ((k-i)*(k-i) + (l-j)*(l-j) <= r){
+						nbh[m][0] = k;
+						nbh[m][1] = l;
+					}
+					else break;
+				}
+				else {
+					nbh[m][0] = k;
+					nbh[m][1] = l;
+				}
+			}
 		}
+		return nbh;
+	}
+	
 }
 
