@@ -1,4 +1,4 @@
-package kth.ag2411.mapalgebra;
+package ag2411.mapalgebra;
 
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -6,11 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.awt.image.*;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class Layer {
@@ -257,5 +253,16 @@ public class Layer {
 		}		
 		return image;
 	}
+
+	public Layer localSum(Layer inLayer, String outLayerName){
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+		resolution, nullValue);
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
+			}
+		}
+		return outLayer;
+		}
 }
 
