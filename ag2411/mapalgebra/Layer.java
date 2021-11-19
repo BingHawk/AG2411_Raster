@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-
 public class Layer {
 
 	// Attributes
@@ -89,16 +88,6 @@ public class Layer {
 		}
 	}
 
-	public Layer(String name, int nRows, int nCols, double[] origin, double resolution, double nullValue) {
-        // construct a new layer by assigning a value to each of its attributes
-        this.name= name;// on the left hand side are the attributes of
-        this.nRows= nRows;// the new layer;
-        this.nCols= nCols;
-		this.origin= origin;
-		this.resolution= resolution;
-		this.nullValue=nullValue;
-		// on the right hand side are the parameters.// to be continued...}
-	}
 	// Methods
 	// Print
 	public void print(){
