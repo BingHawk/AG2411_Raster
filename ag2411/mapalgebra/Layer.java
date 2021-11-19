@@ -288,9 +288,9 @@ public class Layer {
 		int [][] nbh = new int[n][2]; //[ [i1][j1],[i2][j2] ]
 
 		// Ta fram kvadrat. ---> Lägg till undantagsfall: EDGES <---
+		int m = 0;
 		for (int k = i-r; k <= i+r; k++) { 
 			for (int l = j-r; l <= j+r; l++) {
-				for (int m =0; m < n; m++)
 				
 				// Om vi vill ha cirkel tar vi bort hörnen.
 				if (isSquare == false) {
@@ -304,6 +304,7 @@ public class Layer {
 					nbh[m][0] = k;
 					nbh[m][1] = l;
 				}
+				m = m+1;
 			}
 		}
 		return nbh;
