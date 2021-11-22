@@ -282,7 +282,7 @@ public class Layer {
 	}*/
 	
 	// Ska va private efter testning
-	public int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
+	private int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
 	
 		//int n = 4*r*(r+1)+1;
 		//int [][] nbh = new int[n][2]; //[ [i1][j1],[i2][j2] ]
@@ -295,7 +295,7 @@ public class Layer {
 		for (int k = i-r; k <= i+r; k++) { 
 			for (int l = j-r; l <= j+r; l++) {
 
-				if (k>=0 && l>=0 && k<=nRows && l<=nCols) {
+				if (k>=0 && l>=0 && k<nRows && l<nCols) {
 				// Om vi vill ha cirkel tar vi bort hörnen.
 					if (isSquare == false) {
 						if ((k-i)*(k-i) + (l-j)*(l-j) <= r*r) {
@@ -341,7 +341,7 @@ public class Layer {
 		for(int i = 0; i< nRows; i++){
 			for (int j = 0;j<nCols; j++){
 				if ((values[i][j] != nullValue) && (zoneLayer.values[i][j] != zoneLayer.nullValue)){
-					System.out.println(zoneLayer.values[i][j]+" "+zoneLayer.nullValue);
+					//System.out.println(zoneLayer.values[i][j]+" "+zoneLayer.nullValue);
 
 					if(smallest.containsKey(zoneLayer.values[i][j])){
 						if(values[i][j] < smallest.get(zoneLayer.values[i][j])){
@@ -372,7 +372,7 @@ public class Layer {
 	}
 
 	// FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
-	/*public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
+	public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
 		
 		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
 
@@ -380,24 +380,28 @@ public class Layer {
 			for (int j = 0; j < nCols; j++) {
 				int [][] nbh = getNeighborhood (i, j, r, IsSquare);
 				HashMap<Integer, Double> unik = new HashMap<Integer, Double>();
-				int len = nbh[0].length;
+				int len = nbh.length;
+				//System.out.println("length: "+len);
 				int counter = 0;
-				for (int k = 0; k < 9; k++) {	// 9 should be len, but not working
+				for (int k = 0; k < len; k++) {	// 9 should be len, but not working
 					int a=nbh[k][0];
 					int b=nbh[k][1];
-					System.out.println("a: "+a+", b: "+b );
+					
 
-					/*if (unik.containsValue(values[a][b])) {
+					if (!unik.containsValue(values[a][b])) {
 						counter = counter + 1;
 						unik.put(counter, values[a][b]);
-					}*//*
+						//System.out.println("COUNT: "+counter);
+						outLayer.values[i][j]=counter;
+					}
+					
 					
 				}
-				outLayer.values[i][j]=counter;
+				
 			}
-		}	//outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
+		}
 		return outLayer;
-	}*/
+	}
 }
 
 
