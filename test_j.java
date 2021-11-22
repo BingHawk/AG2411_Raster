@@ -18,9 +18,9 @@ public class test_j {
         int j = 1;
         int r = 1;
         boolean isSquare = false;
-        int[][] nbh = testLayer.getNeighborhood(i, j, r, isSquare);
+        //int[][] nbh = testLayer.getNeighborhood(i, j, r, isSquare);
         isSquare = false;
-        int[][] nbhCircle = testLayer.getNeighborhood(i, j, r, isSquare);
+        //int[][] nbhCircle = testLayer.getNeighborhood(i, j, r, isSquare);
 
         for (int[] val:nbh){
             for (int index: val){
