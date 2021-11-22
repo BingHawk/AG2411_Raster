@@ -180,7 +180,6 @@ public class Layer {
 		return min;
 	}
 	
-	
 	//BufferedImage
 	public BufferedImage toImage() {
 		// This object represents a 24-bit RBG image with a width of 20 pixels
@@ -340,22 +339,14 @@ public class Layer {
 		}
 		return outLayer;
 	}
-
-	/*public Layer focalVariety(int r, boolean IsSquare, String outLayerName) {
-		int nbh = new getNeighborhood(int i, int j, int r, boolean isSquare);
-
-	}*/
 	
 	// Ska va private efter testning
 	private int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
 	
-		//int n = 4*r*(r+1)+1;
-		//int [][] nbh = new int[n][2]; //[ [i1][j1],[i2][j2] ]
 
 		ArrayList<int[]> nbh = new ArrayList<int[]>();
 
 		// Ta fram kvadrat. ---> Lägg till undantagsfall: EDGES <---
-		//int m = 0;
 
 		for (int k = i-r; k <= i+r; k++) { 
 			for (int l = j-r; l <= j+r; l++) {
@@ -368,7 +359,6 @@ public class Layer {
 							indexPair[0] = k;
 							indexPair[1] = l;
 							nbh.add(indexPair);
-							//nbh[m][1] = l;
 						}
 					}
 					else {
@@ -377,7 +367,6 @@ public class Layer {
 						indexPair[1] = l;
 						nbh.add(indexPair);
 					}
-					//m = m+1;
 				}
 			}
 		}
