@@ -8,6 +8,7 @@ import java.awt.image.*;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class Layer {
 
@@ -280,7 +281,7 @@ public class Layer {
 
 	}*/
 	
-	// Ska va private
+	// Ska va private efter testning
 	public int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
 	
 		int n = 4*r*(r+1)+1;
@@ -291,6 +292,10 @@ public class Layer {
 		int m = 0;
 		for (int k = i-r; k <= i+r; k++) { 
 			for (int l = j-r; l <= j+r; l++) {
+
+				// IF-sats för att hoppa ur om något index är mindre än 0
+				// eller större än nRows/nCols
+
 				
 				// Om vi vill ha cirkel tar vi bort hörnen.
 				if (isSquare == false) {
@@ -352,6 +357,19 @@ public class Layer {
 		}
 		return outLayer;
 
+	}
+
+	// FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
+	public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
+		
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				int [][] nbh = getNeighborhood (i, j, r, IsSquare);
+			}
+		}	//outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
+		return outLayer;
 	}
 }
 
