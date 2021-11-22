@@ -10,12 +10,11 @@ public class test_j {
         testLayer.print();
         
         // TEST Get nbh
-        int i = 1;
-        int j = 1;
+        int i = 0;
+        int j = 0;
         int r = 1;
-        boolean isSquare = true;
+        boolean isSquare = false;
         int[][] nbh = testLayer.getNeighborhood(i, j, r, isSquare);
-
         for (int[] val:nbh){
             for (int index: val){
                 System.out.print(index+", ");
@@ -23,5 +22,10 @@ public class test_j {
             System.out.println();
         }
         
+        //String outLayerName = "Utlager";
+        //Layer outLayer = testLayer.focalVariety(r, isSquare, outLayerName);
+        //outLayer.print();
+
+
     }
 }

@@ -20,6 +20,7 @@ All input files are of exactly the same study area.
 ## Testrun: 
 1. compile the constructor in terminal with: 
 $ javac ag2411/mapalgebra/Layer.java
+Powershell: $ javac ag2411\mapalgebra\Layer.java
 2. compile testcode with
 $ javac test.java
 3. run with 

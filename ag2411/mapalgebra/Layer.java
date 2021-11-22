@@ -284,35 +284,47 @@ public class Layer {
 	// Ska va private efter testning
 	public int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
 	
-		int n = 4*r*(r+1)+1;
+		//int n = 4*r*(r+1)+1;
+		//int [][] nbh = new int[n][2]; //[ [i1][j1],[i2][j2] ]
 
-		int [][] nbh = new int[n][2]; //[ [i1][j1],[i2][j2] ]
+		ArrayList<int[]> nbh = new ArrayList<int[]>();
 
 		// Ta fram kvadrat. ---> Lägg till undantagsfall: EDGES <---
-		int m = 0;
+		//int m = 0;
+
 		for (int k = i-r; k <= i+r; k++) { 
 			for (int l = j-r; l <= j+r; l++) {
 
-				// IF-sats för att hoppa ur om något index är mindre än 0
-				// eller större än nRows/nCols
-
-				
+				if (k>=0 && l>=0 && k<=nRows && l<=nCols) {
 				// Om vi vill ha cirkel tar vi bort hörnen.
-				if (isSquare == false) {
-					if ((k-i)*(k-i) + (l-j)*(l-j) <= r){
-						nbh[m][0] = k;
-						nbh[m][1] = l;
+					if (isSquare == false) {
+						if ((k-i)*(k-i) + (l-j)*(l-j) <= r*r) {
+							int[] indexPair = new int[2]; 
+							indexPair[0] = k;
+							indexPair[1] = l;
+							nbh.add(indexPair);
+							//nbh[m][1] = l;
+						}
 					}
-					else break;
+					else {
+						int[] indexPair = new int[2]; 
+						indexPair[0] = k;
+						indexPair[1] = l;
+						nbh.add(indexPair);
+					}
+					//m = m+1;
 				}
-				else {
-					nbh[m][0] = k;
-					nbh[m][1] = l;
-				}
-				m = m+1;
 			}
 		}
-		return nbh;
+
+		int n = nbh.size();
+		int [][] nbh2= new int [n][2];
+
+		for (int index =0; index <n; index++) { 
+			nbh2 [index] = nbh.get(index);
+		}
+
+		return nbh2;
 	}
 	
 	
@@ -360,17 +372,32 @@ public class Layer {
 	}
 
 	// FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
-	public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
+	/*public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
 		
 		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
 
 		for (int i = 0; i < nRows; i++) { 
 			for (int j = 0; j < nCols; j++) {
 				int [][] nbh = getNeighborhood (i, j, r, IsSquare);
+				HashMap<Integer, Double> unik = new HashMap<Integer, Double>();
+				int len = nbh[0].length;
+				int counter = 0;
+				for (int k = 0; k < 9; k++) {	// 9 should be len, but not working
+					int a=nbh[k][0];
+					int b=nbh[k][1];
+					System.out.println("a: "+a+", b: "+b );
+
+					/*if (unik.containsValue(values[a][b])) {
+						counter = counter + 1;
+						unik.put(counter, values[a][b]);
+					}*//*
+					
+				}
+				outLayer.values[i][j]=counter;
 			}
 		}	//outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
 		return outLayer;
-	}
+	}*/
 }
 
 
