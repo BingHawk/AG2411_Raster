@@ -5,10 +5,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.awt.image.*;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.ArrayList;
 
 public class Layer {
 
@@ -276,6 +275,72 @@ public class Layer {
 		return outLayer;
 	}
 
+	public Layer localDifference(Layer inLayer, String outLayerName){
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+		resolution, nullValue);
+
+		// Check that resolution are the same.
+		if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+            System.out.println("Columns, Rows or resolution does not match");
+            System.exit(0);
+        }
+
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				outLayer.values[i][j] = values[i][j] - inLayer.values[i][j];
+				
+				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+				if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+					outLayer.values[i][j] = nullValue;
+			}
+		}
+		return outLayer;
+	}
+
+	public Layer localProduct(Layer inLayer, String outLayerName){
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+		resolution, nullValue);
+
+		// Check that resolution are the same.
+		if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+            System.out.println("Columns, Rows or resolution does not match");
+            System.exit(0);
+        }
+
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				outLayer.values[i][j] = values[i][j] * inLayer.values[i][j];
+				
+				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+				if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+					outLayer.values[i][j] = nullValue;
+			}
+		}
+		return outLayer;
+	}
+
+	public Layer localDivision(Layer inLayer, String outLayerName){
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+		resolution, nullValue);
+
+		// Check that resolution are the same.
+		if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+            System.out.println("Columns, Rows or resolution does not match");
+            System.exit(0);
+        }
+
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				outLayer.values[i][j] = values[i][j] / inLayer.values[i][j];
+				
+				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+				if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+					outLayer.values[i][j] = nullValue;
+			}
+		}
+		return outLayer;
+	}
+
 	/*public Layer focalVariety(int r, boolean IsSquare, String outLayerName) {
 		int nbh = new getNeighborhood(int i, int j, int r, boolean isSquare);
 
@@ -326,7 +391,6 @@ public class Layer {
 
 		return nbh2;
 	}
-	
 	
 	public Layer zonalMinimum(Layer zoneLayer, String outLayerName) {
 	//Test that dimensions match
