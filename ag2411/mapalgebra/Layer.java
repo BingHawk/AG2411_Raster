@@ -9,6 +9,7 @@ import java.lang.Math;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Layer {
@@ -136,6 +137,19 @@ public class Layer {
             e.printStackTrace();
         }
     };
+    
+    public Layer(String name, int nRows, int nCols, double[] origin, double resolution, double nullValue) {
+        // construct a new layer by assigning a value to each of its attributes
+        this.name= name;// on the left hand side are the attributes of
+        this.nRows= nRows;// the new layer;
+        this.nCols= nCols;
+		this.origin= origin;
+		this.resolution= resolution;
+		this.nullValue=nullValue;
+		this.values = new double [nRows][nCols];
+		// on the right hand side are the parameters.// to be continued...}
+	}
+    
     public void print(){
         //Print this layer to console
         System.out.println("ncols         "+nCols);
@@ -259,5 +273,209 @@ public class Layer {
         }
         return color;
     }
+
+public Layer localSum(Layer inLayer, String outLayerName){
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+    resolution, nullValue);
+
+    // Check that resolution are the same.
+    if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    }
+
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
+            
+            // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+            if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+                outLayer.values[i][j] = nullValue;
+        }
+    }
+    return outLayer;
+}
+
+public Layer localDifference(Layer inLayer, String outLayerName){
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+    resolution, nullValue);
+
+    // Check that resolution are the same.
+    if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    }
+
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            outLayer.values[i][j] = values[i][j] - inLayer.values[i][j];
+            
+            // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+            if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+                outLayer.values[i][j] = nullValue;
+        }
+    }
+    return outLayer;
+}
+
+public Layer localProduct(Layer inLayer, String outLayerName){
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+    resolution, nullValue);
+
+    // Check that resolution are the same.
+    if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    }
+
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            outLayer.values[i][j] = values[i][j] * inLayer.values[i][j];
+            
+            // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+            if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+                outLayer.values[i][j] = nullValue;
+        }
+    }
+    return outLayer;
+}
+
+public Layer localDivision(Layer inLayer, String outLayerName){
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+    resolution, nullValue);
+
+    // Check that resolution are the same.
+    if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    }
+
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            outLayer.values[i][j] = values[i][j] / inLayer.values[i][j];
+            
+            // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+            if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+                outLayer.values[i][j] = nullValue;
+        }
+    }
+    return outLayer;
+}
+
+// Ska va private efter testning
+private int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
+
+
+    ArrayList<int[]> nbh = new ArrayList<int[]>();
+
+    // Ta fram kvadrat. ---> Lägg till undantagsfall: EDGES <---
+
+    for (int k = i-r; k <= i+r; k++) { 
+        for (int l = j-r; l <= j+r; l++) {
+
+            if (k>=0 && l>=0 && k<nRows && l<nCols) {
+            // Om vi vill ha cirkel tar vi bort hörnen.
+                if (isSquare == false) {
+                    if ((k-i)*(k-i) + (l-j)*(l-j) <= r*r) {
+                        int[] indexPair = new int[2]; 
+                        indexPair[0] = k;
+                        indexPair[1] = l;
+                        nbh.add(indexPair);
+                    }
+                }
+                else {
+                    int[] indexPair = new int[2]; 
+                    indexPair[0] = k;
+                    indexPair[1] = l;
+                    nbh.add(indexPair);
+                }
+            }
+        }
+    }
+
+    int n = nbh.size();
+    int [][] nbh2= new int [n][2];
+
+    for (int index =0; index <n; index++) { 
+        nbh2 [index] = nbh.get(index);
+    }
+
+    return nbh2;
+}
+
+public Layer zonalMinimum(Layer zoneLayer, String outLayerName) {
+//Test that dimensions match
+    if(nRows != zoneLayer.nRows || nCols != zoneLayer.nCols || resolution != zoneLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    } 
+
+    //Creating and Pupulating a hashmap with lowest value for each zone. Key: zone, Value: lowest value in zone
+    //if a there is a nullValue in the zone, it will return the lowest value of the other values in same zone
+    HashMap<Double, Double> smallest = new HashMap<Double, Double>();
+    for(int i = 0; i< nRows; i++){
+        for (int j = 0;j<nCols; j++){
+            if ((values[i][j] != nullValue) && (zoneLayer.values[i][j] != zoneLayer.nullValue)){
+                //System.out.println(zoneLayer.values[i][j]+" "+zoneLayer.nullValue);
+
+                if(smallest.containsKey(zoneLayer.values[i][j])){
+                    if(values[i][j] < smallest.get(zoneLayer.values[i][j])){
+                        smallest.put(zoneLayer.values[i][j], values[i][j]);
+                    }
+                } else {
+                    smallest.put(zoneLayer.values[i][j], values[i][j]);
+                }
+            } else if(zoneLayer.values[i][j] == zoneLayer.nullValue){
+                System.out.println("nullValue detected");
+                smallest.put(nullValue,nullValue); //adding NullValue to pixels that has no zone
+            }
+        }
+
+    }
+
+    //writing values to new layer
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+    System.out.println(smallest);
+    for(int i = 0; i< nRows; i++){
+        for (int j = 0;j<nCols; j++){
+            //System.out.println(zoneLayer.values[i][j]);
+            outLayer.values[i][j] = smallest.get((double) zoneLayer.values[i][j]);
+        }
+    }
+    return outLayer;
+
+}
+
+// FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
+public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
+    
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            int [][] nbh = getNeighborhood (i, j, r, IsSquare);
+            HashMap<Integer, Double> unik = new HashMap<Integer, Double>();
+            int len = nbh.length;
+            //System.out.println("length: "+len);
+            int counter = 0;
+            for (int k = 0; k < len; k++) {	// 9 should be len, but not working
+                int a=nbh[k][0];
+                int b=nbh[k][1];
+                
+
+                if (!unik.containsValue(values[a][b])) {
+                    counter = counter + 1;
+                    unik.put(counter, values[a][b]);
+                    //System.out.println("COUNT: "+counter);
+                    outLayer.values[i][j]=counter;
+                }
+                
+                
+            }
+            
+        }
+    }
+    return outLayer;
+}
 }
 
