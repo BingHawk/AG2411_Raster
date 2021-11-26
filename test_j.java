@@ -1,9 +1,5 @@
 import ag2411.mapalgebra.Layer;
 
-
-
-
-
 public class test_j {
     public static void main(String[] args) {
         Layer testLayer = new Layer("testar","./data/test/raster3x4.txt");
@@ -14,13 +10,14 @@ public class test_j {
         testLayer.print();
         
         // TEST Get nbh OBS, getNeighborhood has to be made public before testing
+        /*
         int i = 1;
         int j = 1;
         int r = 1;
         boolean isSquare = false;
-        //int[][] nbh = testLayer.getNeighborhood(i, j, r, isSquare);
+        int[][] nbh = testLayer.getNeighborhood(i, j, r, isSquare);
         isSquare = false;
-        //int[][] nbhCircle = testLayer.getNeighborhood(i, j, r, isSquare);
+        int[][] nbhCircle = testLayer.getNeighborhood(i, j, r, isSquare);
 
         for (int[] val:nbh){
             for (int index: val){
@@ -39,8 +36,7 @@ public class test_j {
         String outLayerName = "Utlager";
         Layer outLayer = testLayer.focalVariety(r, isSquare, outLayerName);
         outLayer.print();
-
-
+        */
 
     }
 }
