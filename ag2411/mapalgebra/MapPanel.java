@@ -26,5 +26,5 @@ public class MapPanel extends JPanel {
         g.drawImage(image, 0, 0, image.getWidth()*scale, image.getHeight()*scale, this);
     }
     // The @Overridetag will be ignored by the complier. It just signifies that 
-    // MapPanel modifiesJPanel’spaintComponent() method.
+    // MapPanel modifiesJPanel’s paintComponent() method.
 }

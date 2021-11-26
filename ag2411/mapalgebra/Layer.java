@@ -1,309 +1,268 @@
 package ag2411.mapalgebra;
-
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.io.File;  // Import the File class
+import java.io.FileNotFoundException;  // class to handle errors
+import java.io.FileWriter;   // Import the FileWriter class
+import java.io.IOException;
+import java.lang.Math;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 public class Layer {
+    public String name;
+    public int nRows; 
+    public int nCols;
+    public double[] origin = new double[2];
+    public double resolution;
+    public double[][] values; //values [row][col]
+    public double nullValue; 
+    public double[] minMax = { Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY };
 
-	// Attributes
-	public String name; // name of this layer
-	public int nRows; // number of rows
-	public int nCols; // number of columns
-	public double[] origin = new double[2]; // x,y-coordinates of lower-left corner
-	public double resolution; // cell size
-	public double[] [] values; // data. Alternatively, public double[][] values;
-	public double nullValue; // value designated as "No data"
+    public Layer(String layerName, String path){
+        name = layerName;
+        try{
+            File asciiIn = new File(path);
+            Scanner in = new Scanner(asciiIn);
+            Pattern pattern = Pattern.compile("[A-Za-z_]*");
 
-	//Constructors
-	public Layer(String layerName, String fileName) {	// Constructor - same name as class (Layer in this case).
-		//System.exit(0);
-		// You may want to do some work before reading a file.
+            while(in.hasNextLine() && in.hasNext(pattern) ){
+                String data = in.nextLine();
+                String[] splited = data.split("\\s+");
+                switch(splited[0]){
+                    case "ncols":
+                        try{
+                            nCols = Integer.parseInt(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "nrows":
+                        try{
+                            nRows = Integer.parseInt(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "xllcorner":
+                        try{
+                            origin[0] = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "yllcorner":
+                        try{
+                            origin[1] = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "cellsize":
+                        try{
+                            resolution = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "NODATA_value":
+                        try{
+                            nullValue = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    }           
+            }
+            
+            values = new double[nRows][nCols];
+            int row = 0;
+            while (in.hasNextLine()){
+                //Test number of columns in row
+                String data = in.nextLine();
+                data = data.replace(',','.');
+                String[] splited = data.split("\\s+");
+                if (splited.length != nCols){
+                    System.out.println("ERROR: Metadata does not match data.");
+                    System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
+                    System.exit(0);
+                }
+                int col = 0;
+                for (String i: splited){
+                    try {
+                        values[row][col] = Double.parseDouble(i);
+                        if(values[row][col]>minMax[1]){
+                            minMax[1] = values[row][col];
+                        } else if(values[row][col]<minMax[0]) {
+                            minMax[0] = values[row][col];
+                        }
+                        col = col +1;
+                    } 
+                    catch(ArrayIndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }
+                    catch(NumberFormatException e){
+                        System.out.println("ERROR: Wrong format in data: "+i);
+                        System.exit(0);
+                    }                            
+                }
+                row = row +1;
+            }
+            if(row != nRows){
+                System.out.println("ERROR: Metadata does not match data.");
+                System.out.println("\tdata has " +row+" rows, "+nRows+" was expected.");
+                System.exit(0);
+            }
 
-		try { // Exception may be thrown while reading (and writing) a file.
 
-			// ----- ----- READER - first 6 lines ----- -----
-						File rFile = new File(fileName);						// This object represents an input file, elevation.txt, located at ./data/.
-						FileReader fReader = new FileReader(rFile);				// This object represents a stream of characters read from the file.
-						BufferedReader bReader = new BufferedReader(fReader); 	// This object represents lines of Strings created from the stream of characters.
-						String eachLine;
-						eachLine = bReader.readLine().substring(5).trim();	// Start reading from index 14 (place 15)
-						nCols = Integer.parseInt(eachLine);
-						eachLine = bReader.readLine().substring(5).trim();
-						nRows = Integer.parseInt(eachLine);
-						eachLine = bReader.readLine().substring(9).trim();
-						origin[0] = Double.parseDouble(eachLine);
-						eachLine = bReader.readLine().substring(9).trim();
-						origin[1] = Double.parseDouble(eachLine);
-						eachLine = bReader.readLine().substring(8).trim();
-						resolution = Integer.parseInt(eachLine);
-						eachLine = bReader.readLine().substring(12).trim();
-						nullValue = Double.parseDouble(eachLine);
-						// ----- ----- READER - first 6 lines ----- -----
-
-
-						// Creating a 2-dim matix (array of arrays)
-						values = new double [nRows][nCols];
-
-						/*
-						 * // ----- ----- READER - values ----- ----- eachLine =
-						 * bReader.readLine().replace(",", "."); // Reusing the string named temp, and
-						 * replacing it with the first row of values. for (int l =0; l < nRows -1;l++) {
-						 * String temptemp = bReader.readLine().replace(",", "."); eachLine = eachLine +
-						 * temptemp; } String[] stringarray = eachLine.split(" "); // ----- ----- READER
-						 * - values ----- -----
-						 * 
-						 * // ----- TEST: Content of stringarray ----- REMOVE LATER int r=(nRows - 1) *
-						 * (nCols - 1); // r anv�nds f�r att g�ra printen under allm�n for (int m =0; m
-						 * < r; m++) { System.out.println("Stringarray [" + m + "]: "+ stringarray[m]);
-						 * } // ----- TEST: Content of stringarray -----
-						 */
-
-						for (int i=0; i < nRows; i++) {
-							eachLine = bReader.readLine().replace(",", ".");
-							String[] stringarray = eachLine.split(" ");
-							for (int j = 0; j < nCols; j++) {
-								//int k = i*nCols + j;
-								values [i] [j] = Double.parseDouble(stringarray[j]); 
-							}
-						}
-						bReader.close();
-
-		} 
-		catch (Exception e) {		// Exception
-			System.out.println("Error");
-			
-			e.printStackTrace();
-			
-			System.exit(0);
-		}
-	}
-
-	public Layer(String name, int nRows, int nCols, double[] origin, double resolution, double nullValue) {
+            in.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    };
+    
+    public Layer(String name, int nRows, int nCols, double[] origin, double resolution, double nullValue) {
         // construct a new layer by assigning a value to each of its attributes
         this.name= name;// on the left hand side are the attributes of
         this.nRows= nRows;// the new layer;
         this.nCols= nCols;
-		this.origin= origin;
-		this.resolution= resolution;
-		this.nullValue=nullValue;
-		this.values = new double [nRows][nCols];
+        this.origin= origin;
+        this.resolution= resolution;
+        this.nullValue=nullValue;
+        this.values = new double [nRows][nCols];
 		// on the right hand side are the parameters.// to be continued...}
 	}
-	// Methods
-	// Print
-	public void print(){
 
-		//Print this layer to console
-		System.out.println("ncols "+nCols);
-		System.out.println("nrows "+nRows);
-		System.out.println("xllcorner "+origin[0]);
-		System.out.println("yllcorner "+origin[1]);
-		System.out.println("cellsize "+resolution);
-		System.out.println("NODATA_value " + nullValue);
+    public void print(){
+        //Print this layer to console
+        System.out.println("ncols         "+nCols);
+        System.out.println("nrows         "+nRows);
+        System.out.println("xllcorner     "+origin[0]);
+        System.out.println("yllcorner     "+origin[1]);
+        System.out.println("cellsize      "+resolution);
+        System.out.println("NODATA_value  "+nullValue);
+        for(int i = 0; i < nRows; i++){
+            for(int j = 0; j<nCols; j++){
+                System.out.print(values[i][j]+" ");
+            }
+            System.out.println();
+        }
+    };
+    public void save(String location){
+        try {
+            File writeFile = new File(location);
+            if (writeFile.createNewFile()) {
+              System.out.println("File created: " + writeFile.getName());
+            } else {
+              System.out.println("File already exists. Owerwriting existing file");
+            }
+            FileWriter writer = new FileWriter(location);
+            writer.write("ncols         "+nCols+"\n");
+            writer.write("nrows         "+nRows+"\n");
+            writer.write("xllcorner     "+origin[0]+"\n");
+            writer.write("yllcorner     "+origin[1]+"\n");
+            writer.write("cellsize      "+resolution+"\n");
+            writer.write("NODATA_value  "+nullValue+"\n");
+            for(double[] i: values){
+                for(double j: i){
+                    writer.write(j+" ");
+                }
+                writer.write("\n");
+            }
 
-		try{
-			for (int i = 0; i < nRows; i++) { 
-				for (int j = 0; j < nCols; j++) {
-					System.out.print(values[i][j]+" "); // Re-worked for 2-dim array. 
-				}
-				System.out.println(); 
-			}
-		}
-		catch(java.lang.NullPointerException e){
-			System.out.println("No data to print");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    };
 
-		}
+    //Greyscale
+    public BufferedImage toImage(){
+        // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
+        // (corresponding to the number of columns)and a heightof30pixels
+        // (corresponding to the number of rows).
+        BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
+        // The above image is empty. To colorthe image, you first need to get access to 
+        // itsraster, which is represented by the following object.
+        WritableRaster raster = image.getRaster();
+        // These statementsmake a grayscale value and assign it to the pixelat the
+        // top-left corner of the raster.
+        
+        double range = minMax[0] - minMax[1];
+        if(range == 0){
+            range = 1;
+        }
+        int[] color= new int[3];
+        for(int i = 0; i<nRows; i++){
+            for(int j = 0; j<nCols; j++){
+                int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
+                color[0] = grey; // Red
+                color[1] = grey; // Green
+                color[2] = grey; // Blue
+                raster.setPixel(j, i, color);
+            }
+        }
+        return image;
+    }
+    public BufferedImage toImage(double[] voi) {
+        // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
+        // (corresponding to the number of columns)and a heightof30pixels
+        // (corresponding to the number of rows).
+        BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
+        // The above image is empty. To colorthe image, you first need to get access to 
+        // itsraster, which is represented by the following object.
+        WritableRaster raster = image.getRaster();
+        // These statementsmake a grayscale value and assign it to the pixelat the
+        // top-left corner of the raster.
 
-
-	}
-
-	public void save(String outputFileName) {
-		// save this layer as an ASCII file that can be imported to ArcGIS
-
-		try {
-			// This object represents an output file, out.txt, located at ./data/.
-			File file = new File(outputFileName);
-			// This object represents ASCII data (to be) stored in the file
-			FileWriter fWriter = new FileWriter(file);
-			// Write to the file
-			fWriter.write("ncols         "+ nCols + "\n"); // "\n" represents a new line
-			fWriter.write("nrows         "+ nRows + "\n"); 
-			fWriter.write("xllcorner     "+ origin[0] + "\n");
-			fWriter.write("yllcorner     "+ origin[1] + "\n");
-			fWriter.write("cellsize      "+ resolution + "\n"); 
-			fWriter.write("NODATA_value  "+ nullValue + "\n");
-
-			for (int n = 0; n < nRows; n++) {
-				for (int p = 0; p < nCols; p++) {
-					fWriter.write(values [n] [p] + " ");
-				}
-				fWriter.write("\n");
-
-			}
-			fWriter.close();
-		}
-
-		catch (Exception e) {		// Exception
-			System.out.println("Error");
-			e.printStackTrace();
-		}
-
-	}
-	
-	private double getMax() {
-		double max = Double.NEGATIVE_INFINITY;
-		for (int i = 0; i < nRows; i++) {
-			for (int j = 0; j < nCols; j++) {
-				if (values[i][j] > max) {
-					max = values[i][j];
-				}
-			}
-		}
-		return max;
-	}
-	
-	private double getMin() {
-		double min = Double.POSITIVE_INFINITY;
-		for (int i = 0; i < nRows; i++) {
-			for (int j = 0; j < nCols; j++) {
-				if (values[i][j] < min) {
-					min = values[i][j];
-				}
-			}
-		}
-		return min;
-	}
-	
-	//BufferedImage
-	public BufferedImage toImage() {
-		// This object represents a 24-bit RBG image with a width of 20 pixels
-		// (corresponding to the number of columns) and a height of 30 pixels
-		// (corresponding to the number of rows).
-		BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
-
-		WritableRaster raster = image.getRaster();
-		
-		double min = getMin();
-		double max = getMax();
-	
-		for (int i = 0; i < nRows; i++) { 
-			for (int j = 0; j < nCols; j++) {
-				double [] color = new double[3];
-				double range = max - min;
-				double pixel_greyscale = (values[i][j] - min ) * 255 / range;
-				color[0] = pixel_greyscale; // Red
-				color[1] = pixel_greyscale; // Green
-				color[2] = pixel_greyscale; // Blue
-				raster.setPixel(j, i, color); // (19,0) is the pixel at the top-right corner.
-			}
-		}		
-		return image;
-	}
-	//BufferedImage
-	public BufferedImage toImage(double vois[]) {
-		// This object represents a 24-bit RBG image with a width of 20 pixels
-		// (corresponding to the number of columns) and a height of 30 pixels
-		// (corresponding to the number of rows).
-		BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
-
-		WritableRaster raster = image.getRaster();
-		
-		double min = getMin();
-		double max = getMax();
-		
-		HashMap<Double, int[]> voi2color = new HashMap<Double, int[]>();
-		for (int i=0; i < vois.length; i++) {
-			int [] color = new int[3];
-			int upper = 255;
-			Random random = new Random();
-			color[0] = random.nextInt(upper); // Red
-			color[1] = random.nextInt(upper); // Green
-			color[2] = random.nextInt(upper); // Blue
-			voi2color.put(vois[i], color);
-		}
-		
-		
-		for (int i = 0; i < nRows; i++) { 
-			for (int j = 0; j < nCols; j++) {
-				for (int k = 0; k < vois.length; k++) {
-					if (values[i][j] != vois[k]) {
-						double [] color = new double[3];
-						double range = max - min;
-						double pixel_greyscale = (values[i][j] - min ) * 255 / range;
-						color[0] = pixel_greyscale; // Red
-						color[1] = pixel_greyscale; // Green
-						color[2] = pixel_greyscale; // Blue
-						
-						raster.setPixel(j, i, color); // (19,0) is the pixel at the top-right corner.
-					}
-					else {
-						raster.setPixel(j, i, voi2color.get(vois[k]));
-						break;
-					}
-				}
-			}
-		}		
-		return image;
-	}
-
-	public Layer localSum(Layer inLayer, String outLayerName){
-		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
-		resolution, nullValue);
-
-		// Check that resolution are the same.
-		if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
-            System.out.println("Columns, Rows or resolution does not match");
-            System.exit(0);
+        double range = minMax[1] - minMax[0];
+        if(range == 0){
+            range = 1;
+        }
+       
+        //Build map with this runs random colours. 
+        Map<Double,int[]> colormap = new HashMap<Double,int[]>();
+        for(double i:voi ){
+            colormap.put(i,randomColor());
         }
 
-		for (int i = 0; i < nRows; i++) { 
-			for (int j = 0; j < nCols; j++) {
-				outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
-				
-				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
-				if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
-					outLayer.values[i][j] = nullValue;
-			}
-		}
-		return outLayer;
-	}
-
-	public Layer localDifference(Layer inLayer, String outLayerName){
-		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
-		resolution, nullValue);
-
-		// Check that resolution are the same.
-		if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
-            System.out.println("Columns, Rows or resolution does not match");
-            System.exit(0);
+        int[] color= new int[3];
+        for(int i = 0; i<nRows; i++){
+            for(int j = 0; j<nCols; j++){
+                if(inArr(voi,values[i][j])){
+                    for(int k = 0;k<3;k++){
+                        color[k] = colormap.get(values[i][j])[k];
+                    } raster.setPixel(j, i, color);
+                }
+            }
         }
-
-		for (int i = 0; i < nRows; i++) { 
-			for (int j = 0; j < nCols; j++) {
-				outLayer.values[i][j] = values[i][j] - inLayer.values[i][j];
-				
-				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
-				if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
-					outLayer.values[i][j] = nullValue;
-			}
-		}
-		return outLayer;
-	}
-
-	public Layer localProduct(Layer inLayer, String outLayerName){
-		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
-		resolution, nullValue);
-
-		// Check that resolution are the same.
-		if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
-            System.out.println("Columns, Rows or resolution does not match");
-            System.exit(0);
+        return image;
+    }
+    private boolean inArr(double[] arr, double x){
+        boolean out = false;
+        for(double i : arr){
+            if(i == x){
+                out = true;
+                break;
+            }
         }
 
 		for (int i = 0; i < nRows; i++) { 
@@ -327,134 +286,212 @@ public class Layer {
             System.out.println("Columns, Rows or resolution does not match");
             System.exit(0);
         }
+        return color;
+    }
 
-		for (int i = 0; i < nRows; i++) { 
-			for (int j = 0; j < nCols; j++) {
-				outLayer.values[i][j] = values[i][j] / inLayer.values[i][j];
-				
-				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
-				if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
-					outLayer.values[i][j] = nullValue;
-			}
-		}
-		return outLayer;
-	}
-	
-	// Ska va private efter testning
-	private int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
-	
+public Layer localSum(Layer inLayer, String outLayerName){
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+    resolution, nullValue);
 
-		ArrayList<int[]> nbh = new ArrayList<int[]>();
+    // Check that resolution are the same.
+    if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    }
 
-		// Ta fram kvadrat. ---> Lägg till undantagsfall: EDGES <---
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            outLayer.values[i][j] = values[i][j] + inLayer.values[i][j];
+            
+            // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+            if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+                outLayer.values[i][j] = nullValue;
+        }
+    }
+    return outLayer;
+}
 
-		for (int k = i-r; k <= i+r; k++) { 
-			for (int l = j-r; l <= j+r; l++) {
+public Layer localDifference(Layer inLayer, String outLayerName){
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+    resolution, nullValue);
 
-				if (k>=0 && l>=0 && k<nRows && l<nCols) {
-				// Om vi vill ha cirkel tar vi bort hörnen.
-					if (isSquare == false) {
-						if ((k-i)*(k-i) + (l-j)*(l-j) <= r*r) {
-							int[] indexPair = new int[2]; 
-							indexPair[0] = k;
-							indexPair[1] = l;
-							nbh.add(indexPair);
-						}
-					}
-					else {
-						int[] indexPair = new int[2]; 
-						indexPair[0] = k;
-						indexPair[1] = l;
-						nbh.add(indexPair);
-					}
-				}
-			}
-		}
+    // Check that resolution are the same.
+    if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    }
 
-		int n = nbh.size();
-		int [][] nbh2= new int [n][2];
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            outLayer.values[i][j] = values[i][j] - inLayer.values[i][j];
+            
+            // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+            if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+                outLayer.values[i][j] = nullValue;
+        }
+    }
+    return outLayer;
+}
 
-		for (int index =0; index <n; index++) { 
-			nbh2 [index] = nbh.get(index);
-		}
+public Layer localProduct(Layer inLayer, String outLayerName){
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+    resolution, nullValue);
 
-		return nbh2;
-	}
-	
-	public Layer zonalMinimum(Layer zoneLayer, String outLayerName) {
-	//Test that dimensions match
-		if(nRows != zoneLayer.nRows || nCols != zoneLayer.nCols || resolution != zoneLayer.resolution){
-			System.out.println("Columns, Rows or resolution does not match");
-			System.exit(0);
-		} 
+    // Check that resolution are the same.
+    if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    }
 
-		//Creating and Pupulating a hashmap with lowest value for each zone. Key: zone, Value: lowest value in zone
-		//if a there is a nullValue in the zone, it will return the lowest value of the other values in same zone
-		HashMap<Double, Double> smallest = new HashMap<Double, Double>();
-		for(int i = 0; i< nRows; i++){
-			for (int j = 0;j<nCols; j++){
-				if ((values[i][j] != nullValue) && (zoneLayer.values[i][j] != zoneLayer.nullValue)){
-					//System.out.println(zoneLayer.values[i][j]+" "+zoneLayer.nullValue);
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            outLayer.values[i][j] = values[i][j] * inLayer.values[i][j];
+            
+            // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+            if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+                outLayer.values[i][j] = nullValue;
+        }
+    }
+    return outLayer;
+}
 
-					if(smallest.containsKey(zoneLayer.values[i][j])){
-						if(values[i][j] < smallest.get(zoneLayer.values[i][j])){
-							smallest.put(zoneLayer.values[i][j], values[i][j]);
-						}
-					} else {
-						smallest.put(zoneLayer.values[i][j], values[i][j]);
-					}
-				} else if(zoneLayer.values[i][j] == zoneLayer.nullValue){
-					System.out.println("nullValue detected");
-					smallest.put(nullValue,nullValue); //adding NullValue to pixels that has no zone
-				}
-			}
+public Layer localDivision(Layer inLayer, String outLayerName){
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+    resolution, nullValue);
 
-		}
+    // Check that resolution are the same.
+    if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    }
 
-		//writing values to new layer
-		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
-		System.out.println(smallest);
-		for(int i = 0; i< nRows; i++){
-			for (int j = 0;j<nCols; j++){
-				//System.out.println(zoneLayer.values[i][j]);
-				outLayer.values[i][j] = smallest.get((double) zoneLayer.values[i][j]);
-			}
-		}
-		return outLayer;
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            outLayer.values[i][j] = values[i][j] / inLayer.values[i][j];
+            
+            // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+            if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+                outLayer.values[i][j] = nullValue;
+        }
+    }
+    return outLayer;
+}
 
-	}
+// Ska va private efter testning
+private int[][] getNeighborhood(int i, int j, int r, boolean isSquare) {
 
-	// FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
-	public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
-		
-		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
 
-		for (int i = 0; i < nRows; i++) { 
-			for (int j = 0; j < nCols; j++) {
-				int [][] nbh = getNeighborhood (i, j, r, IsSquare);
-				HashMap<Integer, Double> unik = new HashMap<Integer, Double>();
-				int len = nbh.length;
-				//System.out.println("length: "+len);
-				int counter = 0;
-				for (int k = 0; k < len; k++) {	// 9 should be len, but not working
-					int a=nbh[k][0];
-					int b=nbh[k][1];
-					
+    ArrayList<int[]> nbh = new ArrayList<int[]>();
 
-					if (!unik.containsValue(values[a][b])) {
-						counter = counter + 1;
-						unik.put(counter, values[a][b]);
-						//System.out.println("COUNT: "+counter);
-						outLayer.values[i][j]=counter;
-					}
-					
-					
-				}
-				
-			}
-		}
-		return outLayer;
-	}
+    // Ta fram kvadrat. ---> Lägg till undantagsfall: EDGES <---
+
+    for (int k = i-r; k <= i+r; k++) { 
+        for (int l = j-r; l <= j+r; l++) {
+
+            if (k>=0 && l>=0 && k<nRows && l<nCols) {
+            // Om vi vill ha cirkel tar vi bort hörnen.
+                if (isSquare == false) {
+                    if ((k-i)*(k-i) + (l-j)*(l-j) <= r*r) {
+                        int[] indexPair = new int[2]; 
+                        indexPair[0] = k;
+                        indexPair[1] = l;
+                        nbh.add(indexPair);
+                    }
+                }
+                else {
+                    int[] indexPair = new int[2]; 
+                    indexPair[0] = k;
+                    indexPair[1] = l;
+                    nbh.add(indexPair);
+                }
+            }
+        }
+    }
+
+    int n = nbh.size();
+    int [][] nbh2= new int [n][2];
+
+    for (int index =0; index <n; index++) { 
+        nbh2 [index] = nbh.get(index);
+    }
+
+    return nbh2;
+}
+
+public Layer zonalMinimum(Layer zoneLayer, String outLayerName) {
+//Test that dimensions match
+    if(nRows != zoneLayer.nRows || nCols != zoneLayer.nCols || resolution != zoneLayer.resolution){
+        System.out.println("Columns, Rows or resolution does not match");
+        System.exit(0);
+    } 
+
+    //Creating and Pupulating a hashmap with lowest value for each zone. Key: zone, Value: lowest value in zone
+    //if a there is a nullValue in the zone, it will return the lowest value of the other values in same zone
+    HashMap<Double, Double> smallest = new HashMap<Double, Double>();
+    for(int i = 0; i< nRows; i++){
+        for (int j = 0;j<nCols; j++){
+            if ((values[i][j] != nullValue) && (zoneLayer.values[i][j] != zoneLayer.nullValue)){
+                //System.out.println(zoneLayer.values[i][j]+" "+zoneLayer.nullValue);
+
+                if(smallest.containsKey(zoneLayer.values[i][j])){
+                    if(values[i][j] < smallest.get(zoneLayer.values[i][j])){
+                        smallest.put(zoneLayer.values[i][j], values[i][j]);
+                    }
+                } else {
+                    smallest.put(zoneLayer.values[i][j], values[i][j]);
+                }
+            } else if(zoneLayer.values[i][j] == zoneLayer.nullValue){
+                System.out.println("nullValue detected");
+                smallest.put(nullValue,nullValue); //adding NullValue to pixels that has no zone
+            }
+        }
+
+    }
+
+    //writing values to new layer
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+    System.out.println(smallest);
+    for(int i = 0; i< nRows; i++){
+        for (int j = 0;j<nCols; j++){
+            //System.out.println(zoneLayer.values[i][j]);
+            outLayer.values[i][j] = smallest.get((double) zoneLayer.values[i][j]);
+        }
+    }
+    return outLayer;
+
+}
+
+// FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
+public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
+    
+    Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+
+    for (int i = 0; i < nRows; i++) { 
+        for (int j = 0; j < nCols; j++) {
+            int [][] nbh = getNeighborhood (i, j, r, IsSquare);
+            HashMap<Integer, Double> unik = new HashMap<Integer, Double>();
+            int len = nbh.length;
+            //System.out.println("length: "+len);
+            int counter = 0;
+            for (int k = 0; k < len; k++) {	// 9 should be len, but not working
+                int a=nbh[k][0];
+                int b=nbh[k][1];
+                
+
+                if (!unik.containsValue(values[a][b])) {
+                    counter = counter + 1;
+                    unik.put(counter, values[a][b]);
+                    //System.out.println("COUNT: "+counter);
+                    outLayer.values[i][j]=counter;
+                }
+                
+                
+            }
+            
+        }
+    }
+    return outLayer;
+}
 }
 
 
