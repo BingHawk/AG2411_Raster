@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Layer {
     public String name;
@@ -143,13 +144,13 @@ public class Layer {
         this.name= name;// on the left hand side are the attributes of
         this.nRows= nRows;// the new layer;
         this.nCols= nCols;
-		this.origin= origin;
-		this.resolution= resolution;
-		this.nullValue=nullValue;
-		this.values = new double [nRows][nCols];
+        this.origin= origin;
+        this.resolution= resolution;
+        this.nullValue=nullValue;
+        this.values = new double [nRows][nCols];
 		// on the right hand side are the parameters.// to be continued...}
 	}
-    
+
     public void print(){
         //Print this layer to console
         System.out.println("ncols         "+nCols);
@@ -263,13 +264,27 @@ public class Layer {
                 break;
             }
         }
-        return out;
-    }
-    private int[] randomColor(){
-        int[] color = new int[3];
-        for(int i = 0; i<3; i++){
-            color[i] = (int) (Math.random() * 255);
-            //System.out.println(color[i]);
+
+		for (int i = 0; i < nRows; i++) { 
+			for (int j = 0; j < nCols; j++) {
+				outLayer.values[i][j] = values[i][j] * inLayer.values[i][j];
+				
+				// set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
+				if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
+					outLayer.values[i][j] = nullValue;
+			}
+		}
+		return outLayer;
+	}
+
+	public Layer localDivision(Layer inLayer, String outLayerName){
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
+		resolution, nullValue);
+
+		// Check that resolution are the same.
+		if(nRows != inLayer.nRows || nCols != inLayer.nCols || resolution != inLayer.resolution){
+            System.out.println("Columns, Rows or resolution does not match");
+            System.exit(0);
         }
         return color;
     }
@@ -478,4 +493,5 @@ public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
     return outLayer;
 }
 }
+
 

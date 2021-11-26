@@ -5,14 +5,19 @@ import java.awt.*;
 public class test {
     public static void main(String[] args) {
         Layer testLayer = new Layer("testar","./data/test/raster3x4.txt");
+        Layer zoneLayer = new Layer("zones","./data/test/testZones1.txt");
+
+        Layer zoneSumLayer = testLayer.zonalMinimum(zoneLayer, "zoneSum");
+
         testLayer.print();
+        zoneSumLayer.print();
 
         JFrame appFrame= new JFrame();
         int scale = 100;
         //double[] voi = {10,20};
-        MapPanel map = new MapPanel(testLayer.toImage(),scale);
+        MapPanel map = new MapPanel(zoneSumLayer.toImage(),scale);
 
-        Dimension dimension= new Dimension(scale * testLayer.nCols , scale * testLayer.nRows);
+        Dimension dimension= new Dimension(scale * zoneSumLayer.nCols , scale * zoneSumLayer.nRows);
         map.setPreferredSize(dimension);
 
         appFrame.add(map);
