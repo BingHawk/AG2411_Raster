@@ -66,8 +66,8 @@ public class Network {
                     nodeMap.put(tailName,tail);
                 }
 
-                forwardArc = new Arc(arcID+"_forward",tail,head,weight);
-                backwardArc = new Arc(arcID+"_backward",head,tail,weight);
+                forwardArc = new Arc(arcID+"_forward",head,tail,weight);
+                backwardArc = new Arc(arcID+"_backward",tail,head,weight);
 
                 head.outArcs.add(backwardArc);
                 tail.outArcs.add(forwardArc);
@@ -107,6 +107,23 @@ public class Network {
         }
     }
     public void printArcs(){
+        System.out.println("\tARC NAME\tTAIL NAME\tHEAD NAME\tWEIGHT");
+        Node node;
+        node = nodeMap.get(nodeMap.keySet().toArray()[0]);
+        HashMap<String, Arc> visited = new HashMap<String, Arc>();
+        printRec(node,visited);
 
+        //TODO: How to get a starting node??
+
+    }
+    private void printRec(Node node, HashMap<String, Arc> visited){
+        for(Arc arc: node.outArcs){
+            if (!visited.containsKey(arc.name)){
+                System.out.println("\t"+arc.name+"\t"+arc.tail.name+"\t\t"+arc.head.name+"\t\t"+arc.weight);
+                visited.put(arc.name,arc);
+                printRec(arc.head,visited);
+            }
+
+        }
     }
 }
