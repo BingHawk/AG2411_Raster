@@ -5,6 +5,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
+import java.io.File;  // Import the File class
+import java.io.FileWriter;   // Import the FileWriter class
+import java.io.IOException;
+
 
 public class Network {
     String name; 
@@ -86,14 +90,34 @@ public class Network {
                 line = bReader.readLine();
             }
             bReader.close();
-        } catch(Exception e) {
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }
 // Other methods
     public void save(String outputFileName) {
+        try {
+            File writeFile = new File(outputFileName);
+            if (writeFile.createNewFile()) {
+              System.out.println("File created: " + writeFile.getName());
+            } else {
+              System.out.println("File already exists. Owerwriting existing file");
+            }
+            FileWriter writer = new FileWriter(outputFileName);
+            writer.write("TLID\tNAME\tWEIGHT\n");
+
+
+            writer.close();
+        } catch(IOException e) {
+                e.printStackTrace();
+            }
         // Do something
     }
+
+    private void saveRec(Node node, HashMap visited, FileWriter writer){
+        
+    }
+
     public void printNodes(){
         System.out.println("\tNODE NAME\tVALUE");
         Node node;
@@ -112,10 +136,8 @@ public class Network {
         node = nodeMap.get(nodeMap.keySet().toArray()[0]);
         HashMap<String, Arc> visited = new HashMap<String, Arc>();
         printRec(node,visited);
-
-        //TODO: How to get a starting node??
-
     }
+
     private void printRec(Node node, HashMap<String, Arc> visited){
         for(Arc arc: node.outArcs){
             if (!visited.containsKey(arc.name)){
