@@ -11,7 +11,7 @@ import ag2411.network.*;
 public class Ex04 {
 
 	//run with:
-	//java Ex04.java data/test/smallnetwork.txt
+	//java Ex04.java data/test/smallnetwork.txt data/output/networkOutput.txt
 	public static void main(String[] args) {
 		// args[0] : name of an input file
 		// args[1] : name of an out put file 
@@ -19,9 +19,7 @@ public class Ex04 {
 		testNetwork.printNodes();
 		System.out.println();
 		testNetwork.printArcs();
-
-		String[] splitPath = args[0].split("/");
-		testNetwork.save("data/output/arc"+splitPath[2]);
+		testNetwork.save(args[1]);
 	}
 
 }
