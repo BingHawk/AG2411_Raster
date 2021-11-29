@@ -20,7 +20,7 @@ public class Layer {
     public double resolution;
     public double[][] values; //values [row][col]
     public double nullValue; 
-    public double[] minMax = { Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY };
+    public double[] minMax = { Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY }; //minMax is a list like: [min, max]
 
     public Layer(String layerName, String path){
         name = layerName;
