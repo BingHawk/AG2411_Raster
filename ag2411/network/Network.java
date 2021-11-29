@@ -39,6 +39,15 @@ public class Network {
             // (undirected) arc stored in the file
             line = bReader.readLine();
             // Store each element of the network in forward star.
+
+            // Do the following.
+            // Check if nodeMap contains a Node whose name is tailName or headName.
+            // If not, create it, assign it to tail or head, and add it to nodeMap.
+            // Otherwise, retrieve it from nodeMap.
+            // Then, create two Arcs:
+            // one from tail to head, to be added to outArc of tail
+            // one from head to tail, to be added to outArc of head.
+            // Read the next line
             while(line != null) {
                 // Split each line into an array of 4 Strings
                 //using ,as separator.
@@ -75,18 +84,6 @@ public class Network {
 
                 head.outArcs.add(backwardArc);
                 tail.outArcs.add(forwardArc);
-
-
-                // Do the following.
-                // Check if nodeMap contains a Node whose name is
-                // tailName or headName.
-                // If not, create it, assign it to tail or head, and add
-                // it to nodeMap.
-                // Otherwise, retrieve it from nodeMap.
-                // Then, create two Arcs:
-                // one from tail to head, to be added to outArc of tail
-                // one from head to tail, to be added to outArc of head.
-                // Read the next line
                 line = bReader.readLine();
             }
             bReader.close();
@@ -104,20 +101,28 @@ public class Network {
               System.out.println("File already exists. Owerwriting existing file");
             }
             FileWriter writer = new FileWriter(outputFileName);
-            writer.write("TLID\tNAME\tWEIGHT\n");
+            writer.write("TLID,NAME,WEIGHT\n");
 
-
+            Node node;
+            for (String nodeName: nodeMap.keySet()) {
+                node = nodeMap.get(nodeName);
+                for (Arc arc: node.outArcs) {
+                    String tlid;
+                    if(arc.name.substring(arc.name.length()-7,arc.name.length()).equals("forward")){ //appendix is "_forward"
+                        tlid = arc.name.substring(0,arc.name.length()-8);
+                    } else { //appendix is "_backward"
+                        tlid = arc.name.substring(0,arc.name.length()-9);
+                    }
+                    writer.write(tlid+","+arc.name+","+arc.weight+"\n");
+                }
+            }
             writer.close();
         } catch(IOException e) {
                 e.printStackTrace();
             }
         // Do something
     }
-
-    private void saveRec(Node node, HashMap visited, FileWriter writer){
-        
-    }
-
+    
     public void printNodes(){
         System.out.println("\tNODE NAME\tVALUE");
         Node node;
@@ -130,22 +135,15 @@ public class Network {
             System.out.println();
         }
     }
+    
     public void printArcs(){
         System.out.println("\tARC NAME\tTAIL NAME\tHEAD NAME\tWEIGHT");
         Node node;
-        node = nodeMap.get(nodeMap.keySet().toArray()[0]);
-        HashMap<String, Arc> visited = new HashMap<String, Arc>();
-        printRec(node,visited);
-    }
-
-    private void printRec(Node node, HashMap<String, Arc> visited){
-        for(Arc arc: node.outArcs){
-            if (!visited.containsKey(arc.name)){
+        for (String nodeName: nodeMap.keySet()) {
+            node = nodeMap.get(nodeName);
+            for (Arc arc: node.outArcs) {
                 System.out.println("\t"+arc.name+"\t"+arc.tail.name+"\t\t"+arc.head.name+"\t\t"+arc.weight);
-                visited.put(arc.name,arc);
-                printRec(arc.head,visited);
             }
-
         }
     }
 }

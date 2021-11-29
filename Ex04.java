@@ -19,6 +19,9 @@ public class Ex04 {
 		testNetwork.printNodes();
 		System.out.println();
 		testNetwork.printArcs();
+
+		String[] splitPath = args[0].split("/");
+		testNetwork.save("data/output/arc"+splitPath[2]);
 	}
 
 }
