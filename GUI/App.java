@@ -10,12 +10,17 @@ public class App extends JFrame{
     Network[] dispNetworks;
 
     public App(){
+        super();
+        
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = (int) screenSize.getWidth();
         int screenHeight = (int) screenSize.getHeight(); 
         Dimension dimension= new Dimension(screenWidth - 100,screenHeight - 100);
         setPreferredSize(dimension);
-        
+
+        JPanel menuBar = new MenuBar();
+        add(menuBar,BorderLayout.NORTH);
+
     }
 
     public static void main(String[] args){
