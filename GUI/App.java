@@ -2,6 +2,9 @@ package GUI;
 import ag2411.mapalgebra.*;
 import ag2411.network.*;
 import javax.swing.*;
+
+import GUI.components.MenuBar;
+
 import java.awt.*;
 
 

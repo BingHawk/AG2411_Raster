@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-package GUI;
+package GUI.components;
  
 /*
  * ToolBarDemo.java requires the following addditional files:
