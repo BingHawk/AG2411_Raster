@@ -4,13 +4,17 @@ import ag2411.network.*;
 import javax.swing.*;
 
 import GUI.components.MenuBar;
+import GUI.components.ToolBox;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public class App extends JFrame{
-    Layer[] dispLayers;
-    Network[] dispNetworks;
+    ArrayList<Layer> dispLayers;
+    ArrayList<Network> dispNetworks;
+
+    
 
     public App(){
         super();
@@ -23,6 +27,10 @@ public class App extends JFrame{
 
         JPanel menuBar = new MenuBar();
         add(menuBar,BorderLayout.NORTH);
+
+        JToolBar toolbox = new ToolBox();
+        add(toolbox, BorderLayout.LINE_END);
+
 
     }
 

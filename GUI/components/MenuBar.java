@@ -48,16 +48,16 @@ public class MenuBar extends JPanel
             add(fileMenu);
             fileMenu.show(this, 0, HEIGHT);
 
-            System.out.println("Action triggered: "+cmd);
+            //System.out.println("Action triggered: "+cmd);
 
         } else if (SHOW.equals(cmd)) { // second button clicked
             add(showMenu);
             showMenu.show(this, 90, HEIGHT);
 
-            System.out.println("Action triggered: "+cmd);
+            //System.out.println("Action triggered: "+cmd);
 
         } else if (HELP.equals(cmd)) { // third button clicked
-            System.out.println("Action triggered: "+cmd);
+            //System.out.println("Action triggered: "+cmd);
 
         }
  

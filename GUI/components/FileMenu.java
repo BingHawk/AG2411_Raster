@@ -17,6 +17,8 @@ public class FileMenu extends JPopupMenu{
         loadNetwork.setBackground(MenuBar.BG);
         save.setBackground(MenuBar.BG);
 
+        
+
         add(loadRaster);
         add(loadNetwork);
         add(save);
