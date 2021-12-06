@@ -11,10 +11,8 @@ import java.util.ArrayList;
 
 
 public class App extends JFrame{
-    ArrayList<Layer> dispLayers;
-    ArrayList<Network> dispNetworks;
-
-    
+    public static ArrayList<Layer> dispLayers;
+    public static ArrayList<Network> dispNetworks;
 
     public App(){
         super();
