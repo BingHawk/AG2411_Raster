@@ -1,6 +1,9 @@
 package GUI.components;
 
 import javax.swing.*;
+
+import GUI.App;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,11 +34,19 @@ public class ToolBox extends JToolBar
         JButton tool2 = makeToolButton(TOOL2, "Tool 2: longer name");
         JButton tool3 = makeToolButton(ZONALTOOL, "Some Zonal operation");
 
+        JLabel header = new JLabel("Catalogue");
+        header.setFont(App.H1);
         JLabel headerZonal = new JLabel("==Zonal Operations==");
+        headerZonal.setFont(App.H2);
         JLabel headerFocal = new JLabel("==Focal Operations==");
+        headerFocal.setFont(App.H2);
         JLabel headerLocal = new JLabel("==Local Operations==");
+        headerLocal.setFont(App.H2);
         JLabel headerNetwork = new JLabel("==Network Operations==");
+        headerNetwork.setFont(App.H2);
 
+
+        add(header);
         add(headerZonal);
         //Add zonal tools here
         add(tool1);

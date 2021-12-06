@@ -2,6 +2,7 @@ package GUI.components;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
 import java.io.*;
 import javax.swing.filechooser.*;
 
@@ -65,14 +66,19 @@ public class FileMenu extends JPopupMenu
  
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
+                System.out.println("Opening: " + file.getName() + ".");
 
                 Layer inLayer = new Layer(file.getName(),file);
-
                 App.dispLayers.add(inLayer);
+                
+                System.out.println("Layers Created:");
+                for(Layer l : App.dispLayers){
+                    System.out.println(l.name);
+                }
+                App.catalogue.updateCatalogue();
 
                 //Implement sending the file to the layer construct method
 
-                System.out.println("Opening: " + file.getName() + ".");
             } else {
                 System.out.println("Open command cancelled by user.");
             }
@@ -108,5 +114,19 @@ public class FileMenu extends JPopupMenu
 
             System.out.println("Save Action triggered: "+cmd);
         }
+    }
+
+ //Testing if the file was parsed correctly.
+    private void testLoad(Layer inLayer,int scale){
+        JFrame appFrame = new JFrame();
+        MapPanel map = new MapPanel(inLayer.toImage(), scale);
+        Dimension dimension = new Dimension(scale * inLayer.nCols, scale * inLayer.nRows);
+        map.setPreferredSize(dimension);
+
+        appFrame.add(map);
+
+        appFrame.pack();
+        appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        appFrame.setVisible(true);
     }
 }
