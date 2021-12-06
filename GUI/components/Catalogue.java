@@ -2,7 +2,6 @@ package GUI.components;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 import ag2411.mapalgebra.*;
 import GUI.*;

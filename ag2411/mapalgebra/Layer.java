@@ -396,6 +396,7 @@ public class Layer {
         return color;
     }
 
+    //Local operations
     public Layer localSum(Layer inLayer, String outLayerName){
         Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
         resolution, nullValue);
@@ -568,6 +569,7 @@ public class Layer {
 
     }
 
+    //Focal operations
     // FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
     public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
         
@@ -599,6 +601,35 @@ public class Layer {
         }
         return outLayer;
     }
+
+    public Layer focalSlope(int cellsize, String outLayerName) {
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+		for (int i = 0; i < nRows; i++) {
+			for (int j = 0; j < nCols; j++) {
+				double slope;
+				if (i - 1 < 0 || i + 1 > nRows - 1 || j - 1 < 0 || j + 1 > nCols - 1) {
+					slope = nullValue;
+					// attention: the cells in the boundary rows or columns don't have enough
+					// adjacent cells, so skip them
+					// Edit: Assign noData Value instead. 
+					continue;
+				} else {
+					// the slope along x coordination
+					double slope_x = ((values[i - 1][j + 1] + 2 * values[i][j + 1] + values[i + 1][j + 1])
+							- (values[i - 1][j - 1] + 2 * values[i][j - 1] + values[i + 1][j - 1])) / (8 * cellsize);
+					// the slope along y coordination
+					double slope_y = ((values[i + 1][j - 1] + 2 * values[i + 1][j] + values[i + 1][j + 1])
+							- (values[i - 1][j - 1] + 2 * values[i - 1][j] + values[i - 1][j + 1])) / (8 * cellsize);
+					// 57.29578 means 180/��, it transfer a arc value into degree value
+					slope = Math.atan(Math.sqrt(Math.pow(slope_x, 2) + Math.pow(slope_y, 2))) * 57.29578;
+					
+				}
+				// the result doesn't contain any decimal, you can change it if you want
+				outLayer.values[i][j] = Math.round(slope);
+			}
+		}
+		return outLayer;
+	}
 }
 
 
