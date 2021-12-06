@@ -5,6 +5,9 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import javax.swing.filechooser.*;
 
+import GUI.App;
+import ag2411.mapalgebra.*;
+
 public class FileMenu extends JPopupMenu
                     implements ActionListener {
 
@@ -62,6 +65,10 @@ public class FileMenu extends JPopupMenu
  
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
+
+                Layer inLayer = new Layer(file.getName(),file);
+
+                App.dispLayers.add(inLayer);
 
                 //Implement sending the file to the layer construct method
 
