@@ -569,6 +569,66 @@ public class Layer {
 
     }
 
+    public Layer zonalMax(Layer zoneLayer, String outLayerName){
+        //Test that dimensions match
+        if(nRows != zoneLayer.nRows || nCols != zoneLayer.nCols || resolution != zoneLayer.resolution){
+            System.out.println("Columns, Rows or resolution does not match");
+            System.exit(0);
+        } 
+        
+        Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+
+		HashMap<Double, Double> hm = new HashMap<Double, Double>();
+		for(int i = 0; i<nRows; i++) {
+			for(int j = 0; j<nCols; j++) {
+				if(!hm.containsKey(zoneLayer.values[i][j])) {
+					hm.put(zoneLayer.values[i][j], this.values[i][j]);
+				}
+				else {
+					if(this.values[i][j]> hm.get(zoneLayer.values[i][j])) {
+						hm.put(zoneLayer.values[i][j], this.values[i][j]);
+					}
+				}
+			}
+		}
+		for(int i = 0; i <nRows; i++) {
+			for(int j=0; j < nCols; j++) {
+				outLayer.values[i][j] = hm.get(zoneLayer.values[i][j]);
+			}
+		}
+		//System.out.println("zonalMax\n");
+		return outLayer;
+
+	}
+    
+    public Layer zonalAvg(Layer zoneLayer, String outLayerName){
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+
+		HashMap<Double, Double> hm = new HashMap<Double, Double>();
+		HashMap<Double, Double> count = new HashMap<Double, Double>();
+
+		for(int i = 0; i<nRows; i++) {
+			for(int j = 0; j<nCols; j++) {
+				if(!hm.containsKey(zoneLayer.values[i][j])) {
+					hm.put(zoneLayer.values[i][j], this.values[i][j]);
+					count.put(zoneLayer.values[i][j], 1.0);
+				}
+				else {
+					//int w = Collections.frequency(hm, zoneLayer.values[i][j]);
+					count.put(zoneLayer.values[i][j],  count.get(zoneLayer.values[i][j])+1.0);
+					hm.put(zoneLayer.values[i][j], this.values[i][j]+ hm.get(zoneLayer.values[i][j]));
+				}
+			}
+		}
+		for(int i = 0; i <nRows; i++) {
+			for(int j=0; j < nCols; j++) {
+				outLayer.values[i][j] = hm.get(zoneLayer.values[i][j])/count.get(zoneLayer.values[i][j]);
+			}
+		}
+		//System.out.println("zonalAvg\n");
+		return outLayer;
+	}
+    
     //Focal operations
     // FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
     public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
