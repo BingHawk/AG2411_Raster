@@ -630,6 +630,44 @@ public class Layer {
 		}
 		return outLayer;
 	}
+
+	public Layer focalAspect(String outLayerName) {
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+		for (int i = 0; i < nRows; i++) {
+			for (int j = 0; j < nCols; j++) {
+				if (i - 1 < 0 || i + 1 > nRows - 1 || j - 1 < 0 || j + 1 > nCols - 1) {
+					outLayer.values[i][j] = nullValue;
+										
+					// attention: the cells in the boundary rows or columns don't have enough
+					// adjacent cells, so skip them
+					// Edit: Assign noData Value instead. 
+					continue;
+				} else {
+					double slope_x = ((values[i - 1][j + 1] + 2 * values[i][j + 1] + values[i + 1][j + 1])
+							- (values[i - 1][j - 1] + 2 * values[i][j - 1] + values[i + 1][j - 1])) / 8;
+					double slope_y = ((values[i + 1][j - 1] + 2 * values[i + 1][j] + values[i + 1][j + 1])
+							- (values[i - 1][j - 1] + 2 * values[i - 1][j] + values[i - 1][j + 1])) / 8;
+					double aspect = Math.atan2(slope_y, -1 * slope_x) * 57.29578;
+					// attention:the result range of atan2 function is [-��, ��], but the the range of
+					// aspect is[0,360], which indicates direction changes from direct north to the
+					// east, and back to north finally as the value grows
+					if (slope_x == 0 && slope_y == 0) {
+						outLayer.values[i][j] = -1;
+					} else if (aspect < 0) {
+						outLayer.values[i][j] = 90 - Math.round(aspect);
+					} else if (aspect > 90) {
+						outLayer.values[i][j] = 450 - Math.round(aspect);
+					} else {
+						outLayer.values[i][j] = 90 - Math.round(aspect);
+					}
+					// attention: when slope_x and slope_y are 0, this cell doesn't
+					// have any aspect, so I make them be -1.0
+				}
+			}
+		}
+		return outLayer;
+	}
+
 }
 
 
