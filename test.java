@@ -1,5 +1,8 @@
 import ag2411.mapalgebra.*;
 import javax.swing.*;
+
+import GUI.components.MapPanel;
+
 import java.awt.*;
 
 public class test {
@@ -7,7 +10,7 @@ public class test {
         Layer testLayer = new Layer("testar","./data/test/raster3x4.txt");
         Layer zoneLayer = new Layer("zones","./data/test/testZones1.txt");
 
-        Layer zoneSumLayer = testLayer.zonalMinimum(zoneLayer, "zoneSum");
+        Layer zoneSumLayer = testLayer.zonalMin(zoneLayer, "zoneSum");
 
         testLayer.print();
         zoneSumLayer.print();

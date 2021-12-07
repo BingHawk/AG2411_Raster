@@ -15,7 +15,6 @@ public class MenuBar extends JPanel
     static final private String HELP = "help";
     static final private int HEIGHT = 39;
 
-
     public MenuBar(){
         super();
 

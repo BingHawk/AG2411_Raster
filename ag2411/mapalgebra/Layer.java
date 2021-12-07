@@ -22,123 +22,6 @@ public class Layer {
     public double nullValue; 
     public double[] minMax = { Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY }; //minMax is a list like: [min, max]
     
-    //Takes file as input
-    public Layer(String layerName, File asciiIn){
-        name = layerName;
-        try{
-            //File asciiIn = new File(path);
-            Scanner in = new Scanner(asciiIn);
-            Pattern pattern = Pattern.compile("[A-Za-z_]*");
-
-            while(in.hasNextLine() && in.hasNext(pattern) ){
-                String data = in.nextLine();
-                String[] splited = data.split("\\s+");
-                switch(splited[0]){
-                    case "ncols":
-                        try{
-                            nCols = Integer.parseInt(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "nrows":
-                        try{
-                            nRows = Integer.parseInt(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "xllcorner":
-                        try{
-                            origin[0] = Double.parseDouble(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "yllcorner":
-                        try{
-                            origin[1] = Double.parseDouble(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "cellsize":
-                        try{
-                            resolution = Double.parseDouble(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    case "NODATA_value":
-                        try{
-                            nullValue = Double.parseDouble(splited[1]);
-                        }
-                        catch (NumberFormatException ex){
-                            ex.printStackTrace();
-                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
-                            System.exit(0);
-                        }
-                    }           
-            }
-            
-            values = new double[nRows][nCols];
-            int row = 0;
-            while (in.hasNextLine()){
-                //Test number of columns in row
-                String data = in.nextLine();
-                data = data.replace(',','.');
-                String[] splited = data.split("\\s+");
-                if (splited.length != nCols){
-                    System.out.println("ERROR: Metadata does not match data.");
-                    System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
-                    System.exit(0);
-                }
-                int col = 0;
-                for (String i: splited){
-                    try {
-                        values[row][col] = Double.parseDouble(i);
-                        if(values[row][col]>minMax[1]){
-                            minMax[1] = values[row][col];
-                        } else if(values[row][col]<minMax[0]) {
-                            minMax[0] = values[row][col];
-                        }
-                        col = col +1;
-                    } 
-                    catch(ArrayIndexOutOfBoundsException e){
-                        e.printStackTrace();
-                    }
-                    catch(NumberFormatException e){
-                        System.out.println("ERROR: Wrong format in data: "+i);
-                        System.exit(0);
-                    }                            
-                }
-                row = row +1;
-            }
-            if(row != nRows){
-                System.out.println("ERROR: Metadata does not match data.");
-                System.out.println("\tdata has " +row+" rows, "+nRows+" was expected.");
-                System.exit(0);
-            }
-
-
-            in.close();
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    };
-    
     //Takes file path as input
     public Layer(String layerName, String path){
         name = layerName;
@@ -256,6 +139,123 @@ public class Layer {
         }
     };
     
+    //Takes file as input
+    public Layer(String layerName, File asciiIn){
+        name = layerName;
+        try{
+            //File asciiIn = new File(path);
+            Scanner in = new Scanner(asciiIn);
+            Pattern pattern = Pattern.compile("[A-Za-z_]*");
+
+            while(in.hasNextLine() && in.hasNext(pattern) ){
+                String data = in.nextLine();
+                String[] splited = data.split("\\s+");
+                switch(splited[0]){
+                    case "ncols":
+                        try{
+                            nCols = Integer.parseInt(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "nrows":
+                        try{
+                            nRows = Integer.parseInt(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "xllcorner":
+                        try{
+                            origin[0] = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "yllcorner":
+                        try{
+                            origin[1] = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "cellsize":
+                        try{
+                            resolution = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "NODATA_value":
+                        try{
+                            nullValue = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    }           
+            }
+            
+            values = new double[nRows][nCols];
+            int row = 0;
+            while (in.hasNextLine()){
+                //Test number of columns in row
+                String data = in.nextLine();
+                data = data.replace(',','.');
+                String[] splited = data.split("\\s+");
+                if (splited.length != nCols){
+                    System.out.println("ERROR: Metadata does not match data.");
+                    System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
+                    System.exit(0);
+                }
+                int col = 0;
+                for (String i: splited){
+                    try {
+                        values[row][col] = Double.parseDouble(i);
+                        if(values[row][col]>minMax[1]){
+                            minMax[1] = values[row][col];
+                        } else if(values[row][col]<minMax[0]) {
+                            minMax[0] = values[row][col];
+                        }
+                        col = col +1;
+                    } 
+                    catch(ArrayIndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }
+                    catch(NumberFormatException e){
+                        System.out.println("ERROR: Wrong format in data: "+i);
+                        System.exit(0);
+                    }                            
+                }
+                row = row +1;
+            }
+            if(row != nRows){
+                System.out.println("ERROR: Metadata does not match data.");
+                System.out.println("\tdata has " +row+" rows, "+nRows+" was expected.");
+                System.exit(0);
+            }
+
+
+            in.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    };
+
     public Layer(String name, int nRows, int nCols, double[] origin, double resolution, double nullValue) {
         // construct a new layer by assigning a value to each of its attributes
         this.name= name;// on the left hand side are the attributes of
@@ -526,7 +526,8 @@ public class Layer {
         return nbh2;
     }
 
-    public Layer zonalMinimum(Layer zoneLayer, String outLayerName) {
+    //Zonal operations
+    public Layer zonalMin(Layer zoneLayer, String outLayerName) {
     //Test that dimensions match
         if(nRows != zoneLayer.nRows || nCols != zoneLayer.nCols || resolution != zoneLayer.resolution){
             System.out.println("Columns, Rows or resolution does not match");
@@ -628,7 +629,7 @@ public class Layer {
 		//System.out.println("zonalAvg\n");
 		return outLayer;
 	}
-    
+
     //Focal operations
     // FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
     public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {

@@ -34,7 +34,7 @@ public class ToolBox extends JToolBar
         JButton tool2 = makeToolButton(TOOL2, "Tool 2: longer name");
         JButton tool3 = makeToolButton(ZONALTOOL, "Some Zonal operation");
 
-        JLabel header = new JLabel("Catalogue");
+        JLabel header = new JLabel("Tool box");
         header.setFont(App.H1);
         JLabel headerZonal = new JLabel("==Zonal Operations==");
         headerZonal.setFont(App.H2);

@@ -14,7 +14,8 @@ public class FileMenu extends JPopupMenu
     private JMenuItem loadRaster, loadNetwork, save;
     static final private String LOADR = "Load Raster";
     static final private String LOADN = "Load Network";
-    static final private String SAVE = "Save";
+    static final private String SAVEALL = "Save All";
+    static final private String SAVETHIS = "Save This";
 
     public FileMenu(){
         super();
@@ -27,9 +28,13 @@ public class FileMenu extends JPopupMenu
         loadNetwork.addActionListener(this);
         loadNetwork.setActionCommand(LOADN);
 
-        save = new JMenuItem("Save");
+        save = new JMenuItem("Save All");
         save.addActionListener(this);
-        save.setActionCommand(SAVE);
+        save.setActionCommand(SAVEALL);
+
+        save = new JMenuItem("Save this");
+        save.addActionListener(this);
+        save.setActionCommand(SAVETHIS);
 
 
         setBackground(MenuBar.BG);
@@ -67,13 +72,10 @@ public class FileMenu extends JPopupMenu
                 File file = fc.getSelectedFile();
                 System.out.println("Opening: " + file.getName() + ".");
 
-                Layer inLayer = new Layer(file.getName(),file);
+                String[] name = file.getName().split("[.]", 0);
+                Layer inLayer = new Layer(name[0],file);
                 App.dispLayers.add(inLayer);
 
-                System.out.println("Layers Created:");
-                for(Layer l : App.dispLayers){
-                    System.out.println(l.name);
-                }
                 App.catalogue.updateCatalogue();
 
                 //Implement sending the file to the layer construct method
@@ -107,7 +109,7 @@ public class FileMenu extends JPopupMenu
 
         } 
         
-        else if (SAVE.equals(cmd)) { // third button clicked
+        else if (SAVEALL.equals(cmd)) { // third button clicked
             
             //Open location chooser for save (to be implemented)
 

@@ -1,4 +1,4 @@
-package ag2411.mapalgebra;
+package GUI.components;
 import java.awt.image.*;
 import java.awt.*;
 import javax.swing.*;  

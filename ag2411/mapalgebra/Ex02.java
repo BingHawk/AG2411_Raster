@@ -2,6 +2,8 @@ package ag2411.mapalgebra;
 
 import javax.swing.JFrame;
 
+import GUI.components.MapPanel;
+
 public class Ex02 {
 	public static void main(String[] args) {
 		if(args.length == 3) {

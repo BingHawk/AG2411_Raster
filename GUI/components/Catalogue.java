@@ -2,13 +2,18 @@ package GUI.components;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Enumeration;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import ag2411.mapalgebra.*;
 import GUI.*;
 
-public class Catalogue extends JToolBar{
+public class Catalogue extends JToolBar
+                       implements ActionListener{
     static final public Color BG = new Color(210,210,210);  
-    static final public Color BG2 = new Color(10,10,210);                    
+    //static final public Color BG2 = new Color(10,10,210);  
+    static public ButtonGroup bGroup;                  
 
 
     public Catalogue(){
@@ -17,24 +22,58 @@ public class Catalogue extends JToolBar{
         setBackground(BG);
         setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
 
+        bGroup = new ButtonGroup();
+
         JLabel header = new JLabel("Catalogue");
         header.setFont(App.H1);
         add(header);
-
-        //updateCatalogue();
+        
+        updateCatalogue();
 
     }
 
     public void updateCatalogue(){
-        //ArrayList<JLabel> labels = new ArrayList<JLabel>();
-        System.out.println("Updating catalogue");
         for(Layer layer: App.dispLayers){
-            JLabel l = new JLabel(layer.name);
-            
-            add(l);
+
+            if(!buttonInGroup(layer.name, bGroup)){
+                JRadioButton rb = new JRadioButton(layer.name, true);
+                rb.setActionCommand(layer.name);
+                rb.addActionListener(this);
+                bGroup.add(rb);
+                add(rb);
+            }
             revalidate();
-            System.out.println("Adding "+layer.name);
+
         }
+    }
+
+    private boolean buttonInGroup(String ButtonText, ButtonGroup bg){
+        boolean out = false;
+        for (Enumeration<AbstractButton> buttons = bGroup.getElements(); buttons.hasMoreElements();){
+            AbstractButton button = buttons.nextElement();
+
+            if(button.getText().equals(ButtonText)){
+                out = true;
+            }
+        }
+        return out;
+    }
+
+    @Override
+
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        System.out.println("Catalogue action preformed: " + cmd);
+        for(Layer l: App.dispLayers){
+            if(cmd.equals(l.name)){
+                Dimension mapArea = App.map.getPreferredSize();
+                App.map.render(l.toImage(),3);
+                App.map.mPanel.setPreferredSize(mapArea);
+                App.map.mPanel.setVisible(true);
+            }
+        }
+        
+        
     }
     
 }

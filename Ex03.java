@@ -1,8 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
 
+import GUI.components.MapPanel;
 import ag2411.mapalgebra.Layer;
-import ag2411.mapalgebra.MapPanel;
 
 
     // input:
@@ -33,7 +33,7 @@ public class Ex03 {
         else if (operation.equals("zonalMinimum")) {
             // perform zonalMinimum and save & visualize the output layer
             Layer inLayer2 = new Layer("in2", args[3]);
-            outLayer = inLayer1.zonalMinimum(inLayer2, "zonaloutput");
+            outLayer = inLayer1.zonalMin(inLayer2, "zonaloutput");
         }
         else {
             System.out.print(operation + " is not currently available.");
