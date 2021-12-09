@@ -66,10 +66,9 @@ public class Catalogue extends JToolBar
         System.out.println("Catalogue action preformed: " + cmd);
         for(Layer l: App.dispLayers){
             if(cmd.equals(l.name)){
-                Dimension mapArea = App.map.getPreferredSize();
-                App.map.render(l.toImage(),3);
-                App.map.mPanel.setPreferredSize(mapArea);
-                App.map.mPanel.setVisible(true);
+                //TODO: Dynamically set scale to make map fill screen
+                App.render(l.toImage(),5);
+                App.mPanel.setVisible(true);
             }
         }
         

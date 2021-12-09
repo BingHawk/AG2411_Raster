@@ -2,13 +2,12 @@ package GUI;
 import ag2411.mapalgebra.*;
 import ag2411.network.*;
 import javax.swing.*;
-//import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImage;
 
 import GUI.components.Catalogue;
-import GUI.components.Map;
 import GUI.components.MenuBar;
 import GUI.components.ToolBox;
-//import GUI.components.MapPanel;
+import GUI.components.MapPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,9 +17,10 @@ public class App extends JFrame{
     public static ArrayList<Layer> dispLayers;
     public static ArrayList<Network> dispNetworks;
     public static Catalogue catalogue;
-    public static Map map;
+    public static MapPanel mPanel;
     public static final Font H1 = new Font("Sans", Font.BOLD, 16);
     public static final Font H2 = new Font("Sans", Font.BOLD, 14);
+    public static App app;
 
     public App(){
         super();
@@ -49,24 +49,20 @@ public class App extends JFrame{
         catalogue = new Catalogue();
         add(catalogue, BorderLayout.LINE_START);
 
-        map = new Map();
-        add(map);
-
     }
 
-    /* Test to have render in APP:
-    public void render(BufferedImage image, int scale){
+    //Renders an image in APP:
+    public static void render(BufferedImage image, int scale){
         System.out.println("render triggered");
         mPanel = new MapPanel(image, scale);
 
-        add(mPanel);
-        setVisible(true);
-        revalidate();
+        app.add(mPanel);
+        app.revalidate();
     }
-    */
+    
 
     public static void main(String[] args){
-        App app = new App();
+        app = new App();
 
         app.pack();
 
