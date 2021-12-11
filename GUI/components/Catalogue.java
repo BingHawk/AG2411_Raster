@@ -36,7 +36,7 @@ public class Catalogue extends JToolBar
         for(Layer layer: App.dispLayers){
 
             if(!buttonInGroup(layer.name, bGroup)){
-                JRadioButton rb = new JRadioButton(layer.name, true);
+                JRadioButton rb = new JRadioButton(layer.name);
                 rb.setActionCommand(layer.name);
                 rb.addActionListener(this);
                 bGroup.add(rb);
@@ -63,7 +63,6 @@ public class Catalogue extends JToolBar
 
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
-        System.out.println("Catalogue action preformed: " + cmd);
         for(Layer l: App.dispLayers){
             if(cmd.equals(l.name)){
                 //TODO: Dynamically set scale to make map fill screen

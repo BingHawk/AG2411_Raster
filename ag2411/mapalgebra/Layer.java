@@ -107,9 +107,9 @@ public class Layer {
                 for (String i: splited){
                     try {
                         values[row][col] = Double.parseDouble(i);
-                        if(values[row][col]>minMax[1]){
+                        if(values[row][col]>minMax[1] && values[row][col] != nullValue){
                             minMax[1] = values[row][col];
-                        } else if(values[row][col]<minMax[0]) {
+                        } else if(values[row][col]<minMax[0] && values[row][col] != nullValue) {
                             minMax[0] = values[row][col];
                         }
                         col = col +1;
@@ -224,9 +224,9 @@ public class Layer {
                 for (String i: splited){
                     try {
                         values[row][col] = Double.parseDouble(i);
-                        if(values[row][col]>minMax[1]){
+                        if(values[row][col]>minMax[1]&& values[row][col] != nullValue){
                             minMax[1] = values[row][col];
-                        } else if(values[row][col]<minMax[0]) {
+                        } else if(values[row][col]<minMax[0]&& values[row][col] != nullValue) {
                             minMax[0] = values[row][col];
                         }
                         col = col +1;
@@ -314,9 +314,6 @@ public class Layer {
 
     //Greyscale
     public BufferedImage toImage(){
-        // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
-        // (corresponding to the number of columns)and a heightof30pixels
-        // (corresponding to the number of rows).
         BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
         // The above image is empty. To colorthe image, you first need to get access to 
         // itsraster, which is represented by the following object.
@@ -331,11 +328,13 @@ public class Layer {
         int[] color= new int[3];
         for(int i = 0; i<nRows; i++){
             for(int j = 0; j<nCols; j++){
-                int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
-                color[0] = grey; // Red
-                color[1] = grey; // Green
-                color[2] = grey; // Blue
-                raster.setPixel(j, i, color);
+                if(values[i][j] != nullValue){
+                    int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
+                    color[0] = grey; // Red
+                    color[1] = grey; // Green
+                    color[2] = grey; // Blue
+                    raster.setPixel(j, i, color);
+                };
             }
         }
         return image;
@@ -673,7 +672,6 @@ public class Layer {
 					// attention: the cells in the boundary rows or columns don't have enough
 					// adjacent cells, so skip them
 					// Edit: Assign noData Value instead. 
-					continue;
 				} else {
 					// the slope along x coordination
 					double slope_x = ((values[i - 1][j + 1] + 2 * values[i][j + 1] + values[i + 1][j + 1])

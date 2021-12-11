@@ -6,7 +6,9 @@ import java.io.File;
 
 import javax.swing.*;
 import javax.swing.filechooser.*;
-import javax.swing.BoxLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +18,7 @@ import GUI.App;
 public class ToolDialog extends JFrame
                         implements ActionListener {
     private static final String OK = "ok";
+    private static final String CANCEL = "cancel";
     private static final String CHOOSE_FILE1 = "choose1";
     private static final String CHOOSE_FILE2 = "choose2";
     private final String OPERATION;
@@ -32,19 +35,31 @@ public class ToolDialog extends JFrame
         setTitle(OPERATION);
 
         panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
 
         JLabel message = new JLabel("Choose input file(s) for "+operation);
         message.setFont(App.H2);
+        c.gridwidth = 3;
+        c.gridx = 0;
+        c.gridy = 0;
+        panel.add(message,c);
 
         input1 = new JLabel("\nInput file 1: No file chosen");
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 1;
+        panel.add(input1,c);
 
         JButton fileButton1 = new JButton("Choose input file...");
         fileButton1.addActionListener(this);
         fileButton1.setActionCommand(CHOOSE_FILE1);
 
-        panel.add(input1);
-        panel.add(fileButton1);
+        c.gridwidth = 1;
+        c.gridx = 2;
+        c.gridy = 1;
+        panel.add(fileButton1,c);
 
         if(!OPERATION.equals("slope")){
             input2 = new JLabel("\nInput file 2: No file chosen");
@@ -53,8 +68,15 @@ public class ToolDialog extends JFrame
             fileButton2.addActionListener(this);
             fileButton2.setActionCommand(CHOOSE_FILE2);
     
-            panel.add(input2);
-            panel.add(fileButton2);
+            c.gridwidth = 2;
+            c.gridx = 0;
+            c.gridy = 2;
+            panel.add(input2,c);
+            c.gridwidth = 1;
+            c.gridx = 2;
+            c.gridy = 2;
+            panel.add(fileButton2,c);
+            
         }
 
         
@@ -62,9 +84,21 @@ public class ToolDialog extends JFrame
         okButton.addActionListener(this);
         okButton.setActionCommand(OK);
 
-        panel.add(message);
+        c.gridwidth = 1;
+        //c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridy = 3;
+        panel.add(okButton,c);
 
-        panel.add(okButton);
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(this);
+        cancelButton.setActionCommand(CANCEL);
+
+        c.gridwidth = 1;
+        //c.weightx = 0.5;
+        c.gridx = 1;
+        c.gridy = 3;
+        panel.add(cancelButton,c);
 
         add(panel);
         pack();
@@ -87,21 +121,27 @@ public class ToolDialog extends JFrame
                 case "slope": 
                     if(inLayer1 != null){
                         outLayer = inLayer1.focalSlope(outName);
-                        App.dispLayers.add(outLayer);
-                        App.catalogue.updateCatalogue();
-                        outLayer.save("data/output/testoutput.txt");
+                        //App.dispLayers.add(outLayer);
+                        outLayer.save("data/output/"+outName+".txt");
                     }
                 case "zonal min":
                     if(inLayer1 != null && inLayer2 != null){
                         outLayer = inLayer1.zonalMin(inLayer2, outName);
-                        App.dispLayers.add(outLayer);
-                        App.catalogue.updateCatalogue();
-                        outLayer.save("data/output/testoutput.txt");
+                        //App.dispLayers.add(outLayer);
+                        outLayer.save("data/output/"+outName+".txt");
                     }
                 }
+            
+            //App.catalogue.updateCatalogue();
 
+            JFrame window = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, panel);
+            window.dispose();
 
-        } else if(cmd.equals(CHOOSE_FILE1)){
+        } else if (cmd.equals(CANCEL)){
+            JFrame window = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, panel);
+            window.dispose();
+        }
+        else if(cmd.equals(CHOOSE_FILE1)){
             JFileChooser fc = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "ASCII Text raster files only", "txt");
