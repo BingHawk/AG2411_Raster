@@ -65,6 +65,8 @@ public class FileMenu extends JPopupMenu
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "ASCII Text raster files only", "txt");
             fc.setFileFilter(filter);
+            File currentDir = new File(System.getProperty("user.dir"));
+            fc.setCurrentDirectory(currentDir);
 
             int returnVal = fc.showOpenDialog(FileMenu.this);
  
@@ -77,8 +79,6 @@ public class FileMenu extends JPopupMenu
                 App.dispLayers.add(inLayer);
 
                 App.catalogue.updateCatalogue();
-
-                //Implement sending the file to the layer construct method
 
             } else {
                 System.out.println("Open command cancelled by user.");

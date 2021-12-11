@@ -18,8 +18,7 @@ import java.awt.event.ActionListener;
 public class ToolBox extends JToolBar
                      implements ActionListener{
     static final public Color BG = new Color(210,210,210);                    
-    static final private String TOOL1 = "zonal min";
-    static final private String TOOL2 = "tool2";
+    static final private String ZONAL_MIN = "zonal min";
     static final private String SLOPE = "slope";
 
 
@@ -30,8 +29,7 @@ public class ToolBox extends JToolBar
         setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
 
         //Create buttons for the tool here
-        JButton zonalMin = makeToolButton(TOOL1, "zonal minimum");
-        JButton tool2 = makeToolButton(TOOL2, "Tool 2: longer name");
+        JButton zonalMin = makeToolButton(ZONAL_MIN, "zonal minimum");
         JButton slope = makeToolButton(SLOPE, "Slope");
 
         JLabel header = new JLabel("Tool box");
@@ -50,7 +48,6 @@ public class ToolBox extends JToolBar
         add(headerZonal);
         //Add zonal tools here
         add(zonalMin);
-        add(tool2);
         add(headerFocal);
         //Add Focal tools here
         add(slope);

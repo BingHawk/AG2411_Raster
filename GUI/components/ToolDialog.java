@@ -21,12 +21,15 @@ public class ToolDialog extends JFrame
     private static final String CANCEL = "cancel";
     private static final String CHOOSE_FILE1 = "choose1";
     private static final String CHOOSE_FILE2 = "choose2";
+    private static final String SAVE_LOC = "save";
     private final String OPERATION;
     private JLabel input1;
     private JLabel input2;
+    private JLabel outputLoc;
     private JPanel panel;
     private Layer inLayer1;
     private Layer inLayer2;
+    private File saveFile;
 
     public ToolDialog(String operation){
         super();
@@ -79,7 +82,21 @@ public class ToolDialog extends JFrame
             
         }
 
-        
+        outputLoc = new JLabel("Output file name: Null, using default");
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 3;
+        panel.add(outputLoc,c);
+
+        JButton NameButton = new JButton("Choose output location...");
+        NameButton.addActionListener(this);
+        NameButton.setActionCommand(SAVE_LOC);
+        c.gridwidth = 1;
+        c.gridx = 2;
+        c.gridy = 3;
+        panel.add(NameButton,c);
+
+
         JButton okButton = new JButton("OK");
         okButton.addActionListener(this);
         okButton.setActionCommand(OK);
@@ -87,7 +104,7 @@ public class ToolDialog extends JFrame
         c.gridwidth = 1;
         //c.weightx = 0.5;
         c.gridx = 2;
-        c.gridy = 3;
+        c.gridy = 4;
         panel.add(okButton,c);
 
         JButton cancelButton = new JButton("Cancel");
@@ -97,7 +114,7 @@ public class ToolDialog extends JFrame
         c.gridwidth = 1;
         //c.weightx = 0.5;
         c.gridx = 1;
-        c.gridy = 3;
+        c.gridy = 4;
         panel.add(cancelButton,c);
 
         add(panel);
@@ -122,14 +139,23 @@ public class ToolDialog extends JFrame
                     if(inLayer1 != null){
                         outLayer = inLayer1.focalSlope(outName);
                         //App.dispLayers.add(outLayer);
-                        outLayer.save("data/output/"+outName+".txt");
+
+                        if(saveFile == null){
+                            outLayer.save("data/output/"+outName+".txt");
+                        } else {
+                            outLayer.save(saveFile.getAbsolutePath());
+                        }
                     }
                 case "zonal min":
                     if(inLayer1 != null && inLayer2 != null){
                         outLayer = inLayer1.zonalMin(inLayer2, outName);
                         //App.dispLayers.add(outLayer);
-                        outLayer.save("data/output/"+outName+".txt");
-                    }
+
+                        if(saveFile == null){
+                            outLayer.save("data/output/"+outName+".txt");
+                        } else {
+                            outLayer.save(saveFile.getAbsolutePath());
+                        }                    }
                 }
             
             //App.catalogue.updateCatalogue();
@@ -146,6 +172,8 @@ public class ToolDialog extends JFrame
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "ASCII Text raster files only", "txt");
             fc.setFileFilter(filter);
+            File currentDir = new File(System.getProperty("user.dir"));
+            fc.setCurrentDirectory(currentDir);
     
             int returnVal = fc.showOpenDialog(ToolDialog.this);
             System.out.println(returnVal);
@@ -166,6 +194,8 @@ public class ToolDialog extends JFrame
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "ASCII Text raster files only", "txt");
             fc.setFileFilter(filter);
+            File currentDir = new File(System.getProperty("user.dir"));
+            fc.setCurrentDirectory(currentDir);
     
             int returnVal = fc.showOpenDialog(ToolDialog.this);
             System.out.println(returnVal);
@@ -180,6 +210,23 @@ public class ToolDialog extends JFrame
 
                 input2.setText("\nInput file: "+file.getName());
 
+            }
+        } else if(cmd.equals(SAVE_LOC)){
+            JFileChooser fc = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "ASCII Text raster files only", "txt");
+            fc.setFileFilter(filter);
+            File currentDir = new File(System.getProperty("user.dir"));
+            fc.setCurrentDirectory(currentDir);
+            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    
+            int returnVal = fc.showSaveDialog(ToolDialog.this);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                saveFile = fc.getSelectedFile();
+                System.out.println("Saving at: " + saveFile.getName() + ".");
+
+                outputLoc.setText("\nOutput file name: "+saveFile.getName());
             }
         }
     }
