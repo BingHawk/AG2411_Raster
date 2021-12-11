@@ -663,7 +663,7 @@ public class Layer {
         return outLayer;
     }
 
-    public Layer focalSlope(int cellsize, String outLayerName) {
+    public Layer focalSlope(String outLayerName) {
 		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
@@ -677,10 +677,10 @@ public class Layer {
 				} else {
 					// the slope along x coordination
 					double slope_x = ((values[i - 1][j + 1] + 2 * values[i][j + 1] + values[i + 1][j + 1])
-							- (values[i - 1][j - 1] + 2 * values[i][j - 1] + values[i + 1][j - 1])) / (8 * cellsize);
+							- (values[i - 1][j - 1] + 2 * values[i][j - 1] + values[i + 1][j - 1])) / (8 * resolution);
 					// the slope along y coordination
 					double slope_y = ((values[i + 1][j - 1] + 2 * values[i + 1][j] + values[i + 1][j + 1])
-							- (values[i - 1][j - 1] + 2 * values[i - 1][j] + values[i - 1][j + 1])) / (8 * cellsize);
+							- (values[i - 1][j - 1] + 2 * values[i - 1][j] + values[i - 1][j + 1])) / (8 * resolution);
 					// 57.29578 means 180/��, it transfer a arc value into degree value
 					slope = Math.atan(Math.sqrt(Math.pow(slope_x, 2) + Math.pow(slope_y, 2))) * 57.29578;
 					

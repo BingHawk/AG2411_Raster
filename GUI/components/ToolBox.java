@@ -18,9 +18,9 @@ import java.awt.event.ActionListener;
 public class ToolBox extends JToolBar
                      implements ActionListener{
     static final public Color BG = new Color(210,210,210);                    
-    static final private String TOOL1 = "tool1";
+    static final private String TOOL1 = "zonal min";
     static final private String TOOL2 = "tool2";
-    static final private String ZONALTOOL = "zonal1";
+    static final private String SLOPE = "slope";
 
 
     public ToolBox(){
@@ -30,9 +30,9 @@ public class ToolBox extends JToolBar
         setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
 
         //Create buttons for the tool here
-        JButton tool1 = makeToolButton(TOOL1, "Tool 1");
+        JButton zonalMin = makeToolButton(TOOL1, "zonal minimum");
         JButton tool2 = makeToolButton(TOOL2, "Tool 2: longer name");
-        JButton tool3 = makeToolButton(ZONALTOOL, "Some Zonal operation");
+        JButton slope = makeToolButton(SLOPE, "Slope");
 
         JLabel header = new JLabel("Tool box");
         header.setFont(App.H1);
@@ -49,11 +49,11 @@ public class ToolBox extends JToolBar
         add(header);
         add(headerZonal);
         //Add zonal tools here
-        add(tool1);
+        add(zonalMin);
         add(tool2);
         add(headerFocal);
         //Add Focal tools here
-        add(tool3);
+        add(slope);
         add(headerLocal);
         //Add Local tools here
         add(headerNetwork);
@@ -72,6 +72,9 @@ public class ToolBox extends JToolBar
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         System.out.println("Tool button pressed: "+cmd);
+
+        ToolDialog td = new ToolDialog(cmd);
+        td.setVisible(true);
     }
     
 }
