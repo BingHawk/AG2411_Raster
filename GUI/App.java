@@ -25,15 +25,19 @@ public class App extends JFrame{
     public App(){
         super();
 
+
         dispLayers  = new ArrayList<Layer>();
         dispNetworks = new ArrayList<Network>();
 
+        //Some layers included for easy testing. Rememper to invoke updateCatalogue() in Catalogue constructor.
+        /*
         Layer testLayer1 = new Layer("Elevation","/Users/leonard/Documents/GitHub/AG2411_Raster/data/prod/elevation.txt");
         Layer testLayer2 = new Layer("Development","/Users/leonard/Documents/GitHub/AG2411_Raster/data/prod/development.txt");
 
         dispLayers.add(testLayer1);
         dispLayers.add(testLayer2);
-        
+        */
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = (int) screenSize.getWidth();
         int screenHeight = (int) screenSize.getHeight(); 

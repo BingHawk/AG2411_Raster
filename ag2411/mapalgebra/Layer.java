@@ -321,6 +321,11 @@ public class Layer {
         // These statementsmake a grayscale value and assign it to the pixelat the
         // top-left corner of the raster.
         
+        // Check if minMax is calculated:
+        if (minMax[0] == Double.POSITIVE_INFINITY && minMax[1] == Double.NEGATIVE_INFINITY){
+            getMinMax();
+        }
+
         double range = minMax[0] - minMax[1];
         if(range == 0){
             range = 1;
@@ -350,6 +355,10 @@ public class Layer {
         WritableRaster raster = image.getRaster();
         // These statementsmake a grayscale value and assign it to the pixelat the
         // top-left corner of the raster.
+
+        if (minMax[0] == Double.POSITIVE_INFINITY && minMax[1] == Double.NEGATIVE_INFINITY){
+            getMinMax();
+        }
 
         double range = minMax[1] - minMax[0];
         if(range == 0){
@@ -395,6 +404,18 @@ public class Layer {
         return color;
     }
 
+    private void getMinMax(){
+        for(int i = 0; i<nRows; i++) {
+            for(int j = 0; j<nCols; j++) {
+                if(values[i][j]<minMax[0]) {
+                    minMax[0] = values[i][j];
+                } else if(values[i][j]>minMax[1]) {
+                    minMax[1] = values[i][j];
+                }
+            }
+        }
+    }
+    
     //Local operations
     public Layer localSum(Layer inLayer, String outLayerName){
         Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,

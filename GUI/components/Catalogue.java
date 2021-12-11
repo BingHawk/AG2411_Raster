@@ -28,7 +28,8 @@ public class Catalogue extends JToolBar
         header.setFont(App.H1);
         add(header);
         
-        updateCatalogue();
+
+        //updateCatalogue(); //Only use when layers exist by default.
 
     }
 
@@ -41,10 +42,17 @@ public class Catalogue extends JToolBar
                 rb.addActionListener(this);
                 bGroup.add(rb);
                 add(rb);
+
+                //Console print to search for errors
+                /*
+                System.out.print("outLayer in updateCatalogue");
+                layer.print();   
+                */
             }
             revalidate();
 
         }
+
     }
 
     private boolean buttonInGroup(String ButtonText, ButtonGroup bg){
@@ -66,6 +74,12 @@ public class Catalogue extends JToolBar
         for(Layer l: App.dispLayers){
             if(cmd.equals(l.name)){
                 //TODO: Dynamically set scale to make map fill screen
+
+                //Printing to console to search for errors
+                /*
+                System.out.print("outLayer before render");
+                l.print();
+                */
                 App.render(l.toImage(),4);
                 App.mPanel.setVisible(true);
             }

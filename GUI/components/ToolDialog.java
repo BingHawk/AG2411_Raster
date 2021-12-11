@@ -102,7 +102,6 @@ public class ToolDialog extends JFrame
         okButton.setActionCommand(OK);
 
         c.gridwidth = 1;
-        //c.weightx = 0.5;
         c.gridx = 2;
         c.gridy = 4;
         panel.add(okButton,c);
@@ -112,7 +111,6 @@ public class ToolDialog extends JFrame
         cancelButton.setActionCommand(CANCEL);
 
         c.gridwidth = 1;
-        //c.weightx = 0.5;
         c.gridx = 1;
         c.gridy = 4;
         panel.add(cancelButton,c);
@@ -132,13 +130,19 @@ public class ToolDialog extends JFrame
         if(cmd.equals(OK)){
             System.out.println("ok is pressed");
 
-            String outName = inLayer1.name + "_" + OPERATION;
+            String outName;
+            if(saveFile == null){
+                outName = inLayer1.name + "_" + OPERATION;
+            } else {
+                String[] name = saveFile.getName().split("[.]", 0);
+                outName = name[0];
+            }
             Layer outLayer;
             switch(OPERATION){
                 case "slope": 
                     if(inLayer1 != null){
                         outLayer = inLayer1.focalSlope(outName);
-                        //App.dispLayers.add(outLayer);
+                        App.dispLayers.add(outLayer);
 
                         if(saveFile == null){
                             outLayer.save("data/output/"+outName+".txt");
@@ -149,16 +153,22 @@ public class ToolDialog extends JFrame
                 case "zonal min":
                     if(inLayer1 != null && inLayer2 != null){
                         outLayer = inLayer1.zonalMin(inLayer2, outName);
-                        //App.dispLayers.add(outLayer);
+                        App.dispLayers.add(outLayer);
 
                         if(saveFile == null){
                             outLayer.save("data/output/"+outName+".txt");
                         } else {
                             outLayer.save(saveFile.getAbsolutePath());
-                        }                    }
+                        }
+                        //Test by printing to console
+                        /*
+                        System.out.print("outLayer in ToolDialog OK");
+                        outLayer.print();   
+                        */             
+                    }
                 }
             
-            //App.catalogue.updateCatalogue();
+            App.catalogue.updateCatalogue();
 
             JFrame window = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, panel);
             window.dispose();
