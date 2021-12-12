@@ -407,9 +407,9 @@ public class Layer {
     private void getMinMax(){
         for(int i = 0; i<nRows; i++) {
             for(int j = 0; j<nCols; j++) {
-                if(values[i][j]<minMax[0]) {
+                if(values[i][j]<minMax[0] && values[i][j] != nullValue) {
                     minMax[0] = values[i][j];
-                } else if(values[i][j]>minMax[1]) {
+                } else if(values[i][j]>minMax[1] && values[i][j] != nullValue) {
                     minMax[1] = values[i][j];
                 }
             }

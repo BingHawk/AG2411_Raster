@@ -31,6 +31,32 @@ public class ToolDialog extends JFrame
     private Layer inLayer2;
     private File saveFile;
 
+    //HOWTO: Add a tool to the tool dialog: 
+    //1. Fist follow the steps in ToolBox.java to add the tool to the toolbox
+    //2. Check if the operation needs one or two input layers. 
+    //FOR OPERATIONS WITH 2 INPUT LAYERS:
+    //  3. Add a new case for the switch-statement in the actionPerformed(ActionEvent e) method
+    //      by writing "case ToolBox.TOOLHANDLE:" (Same toolhandle as used in ToolBox.java)
+    //  4. Add the following code to the case and change the call to the correct layer-method: 
+        /*
+        if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
+            outLayer = inLayer1.zonalMin(inLayer2, outName); //Add the call to the correct Layer method here. 
+            App.dispLayers.add(outLayer); //Ads the layer to the cataloge
+            if(saveFile == null){ //Check if there is a specified savespace. Otherwise uses default. 
+                outLayer.save("data/output/"+outName+".txt");
+            } else {
+               outLayer.save(saveFile.getAbsolutePath());
+            }          
+        }
+        */
+    //FOR OPERATIONS WITH ONLY 1 INPUT LAYER:
+    //  3. Add a new case for the switch-statement in the actionPerformed(ActionEvent e) method
+    //      by writing "case ToolBox.TOOLHANDLE:" (Same toolhandle as used in ToolBox.java)
+    //  4. Change the code example above so that the if statement only checks inLayer1. 
+    //      Use the following IF-statement instead: (inLayer1 != null)
+    //  5. In the ToolDialog constructor, edit the if statement so it doesn´t run for your operation. 
+    //      add "... && !OPERATION.equals(ToolBox.TOOLHANDLE)" inside the parenthesis of the if statement.
+
     public ToolDialog(String operation){
         super();
 
@@ -64,7 +90,8 @@ public class ToolDialog extends JFrame
         c.gridy = 1;
         panel.add(fileButton1,c);
 
-        if(!OPERATION.equals("slope")){
+        //Change this if-statement if adding tool that takes only one input layer. 
+        if(!OPERATION.equals(ToolBox.SLOPE)){
             input2 = new JLabel("\nInput file 2: No file chosen");
 
             JButton fileButton2 = new JButton("Choose input file...");
@@ -75,6 +102,7 @@ public class ToolDialog extends JFrame
             c.gridx = 0;
             c.gridy = 2;
             panel.add(input2,c);
+
             c.gridwidth = 1;
             c.gridx = 2;
             c.gridy = 2;
@@ -126,7 +154,7 @@ public class ToolDialog extends JFrame
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
-        
+        File currentDir = new File(System.getProperty("user.dir"));
         if(cmd.equals(OK)){
             System.out.println("ok is pressed");
 
@@ -139,7 +167,7 @@ public class ToolDialog extends JFrame
             }
             Layer outLayer;
             switch(OPERATION){
-                case "slope": 
+                case ToolBox.SLOPE: 
                     if(inLayer1 != null){
                         outLayer = inLayer1.focalSlope(outName);
                         App.dispLayers.add(outLayer);
@@ -150,22 +178,18 @@ public class ToolDialog extends JFrame
                             outLayer.save(saveFile.getAbsolutePath());
                         }
                     }
-                case "zonal min":
-                    if(inLayer1 != null && inLayer2 != null){
-                        outLayer = inLayer1.zonalMin(inLayer2, outName);
-                        App.dispLayers.add(outLayer);
-
-                        if(saveFile == null){
+                case ToolBox.ZONAL_MIN:
+                    if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
+                        outLayer = inLayer1.zonalMin(inLayer2, outName); //Add the call to the correct Layer method here. 
+                        App.dispLayers.add(outLayer); //Ads the layer to the cataloge
+                        
+                        if(saveFile == null){ //Check if there is a specified savespace. Otherwise uses default. 
                             outLayer.save("data/output/"+outName+".txt");
                         } else {
-                            outLayer.save(saveFile.getAbsolutePath());
-                        }
-                        //Test by printing to console
-                        /*
-                        System.out.print("outLayer in ToolDialog OK");
-                        outLayer.print();   
-                        */             
+                        outLayer.save(saveFile.getAbsolutePath());
+                        }          
                     }
+                //Add new case here
                 }
             
             App.catalogue.updateCatalogue();
@@ -182,7 +206,6 @@ public class ToolDialog extends JFrame
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "ASCII Text raster files only", "txt");
             fc.setFileFilter(filter);
-            File currentDir = new File(System.getProperty("user.dir"));
             fc.setCurrentDirectory(currentDir);
     
             int returnVal = fc.showOpenDialog(ToolDialog.this);
@@ -204,7 +227,6 @@ public class ToolDialog extends JFrame
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "ASCII Text raster files only", "txt");
             fc.setFileFilter(filter);
-            File currentDir = new File(System.getProperty("user.dir"));
             fc.setCurrentDirectory(currentDir);
     
             int returnVal = fc.showOpenDialog(ToolDialog.this);
@@ -226,7 +248,6 @@ public class ToolDialog extends JFrame
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "ASCII Text raster files only", "txt");
             fc.setFileFilter(filter);
-            File currentDir = new File(System.getProperty("user.dir"));
             fc.setCurrentDirectory(currentDir);
             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
     

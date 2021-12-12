@@ -14,12 +14,13 @@ import java.awt.event.ActionListener;
 //2: Create a button for the tool by writing 'JButton toolName = makeToolButton(TOOLHANDLE, "Tool Name");'
 //      "Tool Name" is the string that is displayed on the button. toolName is the variable containing the button
 //3: Display the new button by writing 'add(toolName);' under the correct headline. 
+//4: Add the tool to the tool dialog by following instructions in ToolDialog.java. 
 
 public class ToolBox extends JToolBar
                      implements ActionListener{
     static final public Color BG = new Color(210,210,210);                    
-    static final private String ZONAL_MIN = "zonal min";
-    static final private String SLOPE = "slope";
+    static final public String ZONAL_MIN = "zonal min";
+    static final public String SLOPE = "slope";
 
 
     public ToolBox(){
