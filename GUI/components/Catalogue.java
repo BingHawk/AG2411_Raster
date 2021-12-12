@@ -50,9 +50,7 @@ public class Catalogue extends JToolBar
                 */
             }
             revalidate();
-
         }
-
     }
 
     private boolean buttonInGroup(String ButtonText, ButtonGroup bg){
@@ -80,7 +78,7 @@ public class Catalogue extends JToolBar
                 System.out.print("outLayer before render");
                 l.print();
                 */
-                App.render(l.toImage(),4);
+                App.render(l.toImage());
                 App.mPanel.setVisible(true);
             }
         }

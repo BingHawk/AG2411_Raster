@@ -177,7 +177,7 @@ public class ToolDialog extends JFrame
                         } else {
                             outLayer.save(saveFile.getAbsolutePath());
                         }
-                    }
+                    } //TODO: add dialog "no layer loaded";
                 case ToolBox.ZONAL_MIN:
                     if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
                         outLayer = inLayer1.zonalMin(inLayer2, outName); //Add the call to the correct Layer method here. 
@@ -188,7 +188,7 @@ public class ToolDialog extends JFrame
                         } else {
                         outLayer.save(saveFile.getAbsolutePath());
                         }          
-                    }
+                    } //TODO: add dialog "no layer loaded";
                 //Add new case here
                 }
             

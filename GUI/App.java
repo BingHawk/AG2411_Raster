@@ -21,6 +21,7 @@ public class App extends JFrame{
     public static final Font H1 = new Font("Sans", Font.BOLD, 16);
     public static final Font H2 = new Font("Sans", Font.BOLD, 14);
     public static App app;
+    public static int zoomLvl = 4;
 
     public App(){
         super();
@@ -56,12 +57,23 @@ public class App extends JFrame{
     }
 
     //Renders an image in APP:
-    public static void render(BufferedImage image, int scale){
+    public static void render(BufferedImage image){
         System.out.println("render triggered");
-        mPanel = new MapPanel(image, scale);
+        mPanel = new MapPanel(image, zoomLvl);
 
         app.add(mPanel);
         app.revalidate();
+    }
+
+    public static void zoom(int change){
+        if (mPanel != null){
+            zoomLvl = zoomLvl+ change;
+            mPanel.scale = zoomLvl;
+            mPanel.revalidate();
+            mPanel.repaint();
+            System.out.println("zoom triggered, new zoom lvl = "+zoomLvl);
+
+        } //TODO: add dialog "no layer loaded";
     }
     
 
