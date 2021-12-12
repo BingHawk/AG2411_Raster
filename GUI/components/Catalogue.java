@@ -71,13 +71,6 @@ public class Catalogue extends JToolBar
         String cmd = e.getActionCommand();
         for(Layer l: App.dispLayers){
             if(cmd.equals(l.name)){
-                //TODO: Dynamically set scale to make map fill screen
-
-                //Printing to console to search for errors
-                /*
-                System.out.print("outLayer before render");
-                l.print();
-                */
                 App.render(l.toImage());
                 App.mPanel.setVisible(true);
             }
