@@ -2,6 +2,8 @@ import ag2411.mapalgebra.*;
 import java.awt.*;
 import javax.swing.*;
 
+import GUI.components.MapPanel;
+
 
 
 public class Ex02 {

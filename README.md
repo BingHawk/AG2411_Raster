@@ -27,3 +27,12 @@ $ javac test.java
 $ java test.java
 
 Test will use raster3x4.txt.
+
+## Project:
+To test the program, compile all and run the App.java program. 
+
+### Documents:
+Project Notes: https://hexmet-my.sharepoint.com/:w:/r/personal/balint_reger_leica-geosystems_com/_layouts/15/Doc.aspx?sourcedoc=%7Bfbaeac4d-65b8-4504-b8f4-e88d51059665%7D&action=default&cid=15be940c-6a68-40f3-87d2-353b0fafdff3
+
+### Sources: 
+ToolBar: https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/components/ToolBarDemoProject/src/components/ToolBarDemo.java

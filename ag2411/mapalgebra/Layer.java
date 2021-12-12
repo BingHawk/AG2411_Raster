@@ -21,7 +21,8 @@ public class Layer {
     public double[][] values; //values [row][col]
     public double nullValue; 
     public double[] minMax = { Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY }; //minMax is a list like: [min, max]
-
+    
+    //Takes file path as input
     public Layer(String layerName, String path){
         name = layerName;
         try{
@@ -106,9 +107,9 @@ public class Layer {
                 for (String i: splited){
                     try {
                         values[row][col] = Double.parseDouble(i);
-                        if(values[row][col]>minMax[1]){
+                        if(values[row][col]>minMax[1] && values[row][col] != nullValue){
                             minMax[1] = values[row][col];
-                        } else if(values[row][col]<minMax[0]) {
+                        } else if(values[row][col]<minMax[0] && values[row][col] != nullValue) {
                             minMax[0] = values[row][col];
                         }
                         col = col +1;
@@ -138,6 +139,123 @@ public class Layer {
         }
     };
     
+    //Takes file as input
+    public Layer(String layerName, File asciiIn){
+        name = layerName;
+        try{
+            //File asciiIn = new File(path);
+            Scanner in = new Scanner(asciiIn);
+            Pattern pattern = Pattern.compile("[A-Za-z_]*");
+
+            while(in.hasNextLine() && in.hasNext(pattern) ){
+                String data = in.nextLine();
+                String[] splited = data.split("\\s+");
+                switch(splited[0]){
+                    case "ncols":
+                        try{
+                            nCols = Integer.parseInt(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "nrows":
+                        try{
+                            nRows = Integer.parseInt(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "xllcorner":
+                        try{
+                            origin[0] = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "yllcorner":
+                        try{
+                            origin[1] = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "cellsize":
+                        try{
+                            resolution = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    case "NODATA_value":
+                        try{
+                            nullValue = Double.parseDouble(splited[1]);
+                        }
+                        catch (NumberFormatException ex){
+                            ex.printStackTrace();
+                            System.out.println("ERROR: Wrong format in metadata: "+splited[0]);
+                            System.exit(0);
+                        }
+                    }           
+            }
+            
+            values = new double[nRows][nCols];
+            int row = 0;
+            while (in.hasNextLine()){
+                //Test number of columns in row
+                String data = in.nextLine();
+                data = data.replace(',','.');
+                String[] splited = data.split("\\s+");
+                if (splited.length != nCols){
+                    System.out.println("ERROR: Metadata does not match data.");
+                    System.out.println("\tRow "+row+" has "+splited.length+" columns, "+nCols+" was expected.");
+                    System.exit(0);
+                }
+                int col = 0;
+                for (String i: splited){
+                    try {
+                        values[row][col] = Double.parseDouble(i);
+                        if(values[row][col]>minMax[1]&& values[row][col] != nullValue){
+                            minMax[1] = values[row][col];
+                        } else if(values[row][col]<minMax[0]&& values[row][col] != nullValue) {
+                            minMax[0] = values[row][col];
+                        }
+                        col = col +1;
+                    } 
+                    catch(ArrayIndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }
+                    catch(NumberFormatException e){
+                        System.out.println("ERROR: Wrong format in data: "+i);
+                        System.exit(0);
+                    }                            
+                }
+                row = row +1;
+            }
+            if(row != nRows){
+                System.out.println("ERROR: Metadata does not match data.");
+                System.out.println("\tdata has " +row+" rows, "+nRows+" was expected.");
+                System.exit(0);
+            }
+
+
+            in.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    };
+
     public Layer(String name, int nRows, int nCols, double[] origin, double resolution, double nullValue) {
         // construct a new layer by assigning a value to each of its attributes
         this.name= name;// on the left hand side are the attributes of
@@ -196,9 +314,6 @@ public class Layer {
 
     //Greyscale
     public BufferedImage toImage(){
-        // Thisobject represents a 24-bit RBG imagewith a widthof 20pixels
-        // (corresponding to the number of columns)and a heightof30pixels
-        // (corresponding to the number of rows).
         BufferedImage image = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
         // The above image is empty. To colorthe image, you first need to get access to 
         // itsraster, which is represented by the following object.
@@ -206,6 +321,11 @@ public class Layer {
         // These statementsmake a grayscale value and assign it to the pixelat the
         // top-left corner of the raster.
         
+        // Check if minMax is calculated:
+        if (minMax[0] == Double.POSITIVE_INFINITY && minMax[1] == Double.NEGATIVE_INFINITY){
+            getMinMax();
+        }
+
         double range = minMax[0] - minMax[1];
         if(range == 0){
             range = 1;
@@ -213,11 +333,13 @@ public class Layer {
         int[] color= new int[3];
         for(int i = 0; i<nRows; i++){
             for(int j = 0; j<nCols; j++){
-                int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
-                color[0] = grey; // Red
-                color[1] = grey; // Green
-                color[2] = grey; // Blue
-                raster.setPixel(j, i, color);
+                if(values[i][j] != nullValue){
+                    int grey = (int) (((255-0)/(minMax[1]-minMax[0]))*(values[i][j]-minMax[1])+255);
+                    color[0] = grey; // Red
+                    color[1] = grey; // Green
+                    color[2] = grey; // Blue
+                    raster.setPixel(j, i, color);
+                };
             }
         }
         return image;
@@ -233,6 +355,10 @@ public class Layer {
         WritableRaster raster = image.getRaster();
         // These statementsmake a grayscale value and assign it to the pixelat the
         // top-left corner of the raster.
+
+        if (minMax[0] == Double.POSITIVE_INFINITY && minMax[1] == Double.NEGATIVE_INFINITY){
+            getMinMax();
+        }
 
         double range = minMax[1] - minMax[0];
         if(range == 0){
@@ -278,6 +404,19 @@ public class Layer {
         return color;
     }
 
+    private void getMinMax(){
+        for(int i = 0; i<nRows; i++) {
+            for(int j = 0; j<nCols; j++) {
+                if(values[i][j]<minMax[0] && values[i][j] != nullValue) {
+                    minMax[0] = values[i][j];
+                } else if(values[i][j]>minMax[1] && values[i][j] != nullValue) {
+                    minMax[1] = values[i][j];
+                }
+            }
+        }
+    }
+    
+    //Local operations
     public Layer localSum(Layer inLayer, String outLayerName){
         Layer outLayer = new Layer(outLayerName, nRows, nCols, origin,
         resolution, nullValue);
@@ -407,7 +546,8 @@ public class Layer {
         return nbh2;
     }
 
-    public Layer zonalMinimum(Layer zoneLayer, String outLayerName) {
+    //Zonal operations
+    public Layer zonalMin(Layer zoneLayer, String outLayerName) {
     //Test that dimensions match
         if(nRows != zoneLayer.nRows || nCols != zoneLayer.nCols || resolution != zoneLayer.resolution){
             System.out.println("Columns, Rows or resolution does not match");
@@ -450,6 +590,67 @@ public class Layer {
 
     }
 
+    public Layer zonalMax(Layer zoneLayer, String outLayerName){
+        //Test that dimensions match
+        if(nRows != zoneLayer.nRows || nCols != zoneLayer.nCols || resolution != zoneLayer.resolution){
+            System.out.println("Columns, Rows or resolution does not match");
+            System.exit(0);
+        } 
+        
+        Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+
+		HashMap<Double, Double> hm = new HashMap<Double, Double>();
+		for(int i = 0; i<nRows; i++) {
+			for(int j = 0; j<nCols; j++) {
+				if(!hm.containsKey(zoneLayer.values[i][j])) {
+					hm.put(zoneLayer.values[i][j], this.values[i][j]);
+				}
+				else {
+					if(this.values[i][j]> hm.get(zoneLayer.values[i][j])) {
+						hm.put(zoneLayer.values[i][j], this.values[i][j]);
+					}
+				}
+			}
+		}
+		for(int i = 0; i <nRows; i++) {
+			for(int j=0; j < nCols; j++) {
+				outLayer.values[i][j] = hm.get(zoneLayer.values[i][j]);
+			}
+		}
+		//System.out.println("zonalMax\n");
+		return outLayer;
+
+	}
+    
+    public Layer zonalAvg(Layer zoneLayer, String outLayerName){
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+
+		HashMap<Double, Double> hm = new HashMap<Double, Double>();
+		HashMap<Double, Double> count = new HashMap<Double, Double>();
+
+		for(int i = 0; i<nRows; i++) {
+			for(int j = 0; j<nCols; j++) {
+				if(!hm.containsKey(zoneLayer.values[i][j])) {
+					hm.put(zoneLayer.values[i][j], this.values[i][j]);
+					count.put(zoneLayer.values[i][j], 1.0);
+				}
+				else {
+					//int w = Collections.frequency(hm, zoneLayer.values[i][j]);
+					count.put(zoneLayer.values[i][j],  count.get(zoneLayer.values[i][j])+1.0);
+					hm.put(zoneLayer.values[i][j], this.values[i][j]+ hm.get(zoneLayer.values[i][j]));
+				}
+			}
+		}
+		for(int i = 0; i <nRows; i++) {
+			for(int j=0; j < nCols; j++) {
+				outLayer.values[i][j] = hm.get(zoneLayer.values[i][j])/count.get(zoneLayer.values[i][j]);
+			}
+		}
+		//System.out.println("zonalAvg\n");
+		return outLayer;
+	}
+
+    //Focal operations
     // FOCAL VARIETY - Returns number indicating variety in neighborhood of specified size
     public Layer focalVariety (int r, boolean IsSquare, String outLayerName) {
         
@@ -481,6 +682,72 @@ public class Layer {
         }
         return outLayer;
     }
+
+    public Layer focalSlope(String outLayerName) {
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+		for (int i = 0; i < nRows; i++) {
+			for (int j = 0; j < nCols; j++) {
+				double slope;
+				if (i - 1 < 0 || i + 1 > nRows - 1 || j - 1 < 0 || j + 1 > nCols - 1) {
+					slope = nullValue;
+					// attention: the cells in the boundary rows or columns don't have enough
+					// adjacent cells, so skip them
+					// Edit: Assign noData Value instead. 
+				} else {
+					// the slope along x coordination
+					double slope_x = ((values[i - 1][j + 1] + 2 * values[i][j + 1] + values[i + 1][j + 1])
+							- (values[i - 1][j - 1] + 2 * values[i][j - 1] + values[i + 1][j - 1])) / (8 * resolution);
+					// the slope along y coordination
+					double slope_y = ((values[i + 1][j - 1] + 2 * values[i + 1][j] + values[i + 1][j + 1])
+							- (values[i - 1][j - 1] + 2 * values[i - 1][j] + values[i - 1][j + 1])) / (8 * resolution);
+					// 57.29578 means 180/��, it transfer a arc value into degree value
+					slope = Math.atan(Math.sqrt(Math.pow(slope_x, 2) + Math.pow(slope_y, 2))) * 57.29578;
+					
+				}
+				// the result doesn't contain any decimal, you can change it if you want
+				outLayer.values[i][j] = Math.round(slope);
+			}
+		}
+		return outLayer;
+	}
+
+	public Layer focalAspect(String outLayerName) {
+		Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
+		for (int i = 0; i < nRows; i++) {
+			for (int j = 0; j < nCols; j++) {
+				if (i - 1 < 0 || i + 1 > nRows - 1 || j - 1 < 0 || j + 1 > nCols - 1) {
+					outLayer.values[i][j] = nullValue;
+										
+					// attention: the cells in the boundary rows or columns don't have enough
+					// adjacent cells, so skip them
+					// Edit: Assign noData Value instead. 
+					continue;
+				} else {
+					double slope_x = ((values[i - 1][j + 1] + 2 * values[i][j + 1] + values[i + 1][j + 1])
+							- (values[i - 1][j - 1] + 2 * values[i][j - 1] + values[i + 1][j - 1])) / 8;
+					double slope_y = ((values[i + 1][j - 1] + 2 * values[i + 1][j] + values[i + 1][j + 1])
+							- (values[i - 1][j - 1] + 2 * values[i - 1][j] + values[i - 1][j + 1])) / 8;
+					double aspect = Math.atan2(slope_y, -1 * slope_x) * 57.29578;
+					// attention:the result range of atan2 function is [-��, ��], but the the range of
+					// aspect is[0,360], which indicates direction changes from direct north to the
+					// east, and back to north finally as the value grows
+					if (slope_x == 0 && slope_y == 0) {
+						outLayer.values[i][j] = -1;
+					} else if (aspect < 0) {
+						outLayer.values[i][j] = 90 - Math.round(aspect);
+					} else if (aspect > 90) {
+						outLayer.values[i][j] = 450 - Math.round(aspect);
+					} else {
+						outLayer.values[i][j] = 90 - Math.round(aspect);
+					}
+					// attention: when slope_x and slope_y are 0, this cell doesn't
+					// have any aspect, so I make them be -1.0
+				}
+			}
+		}
+		return outLayer;
+	}
+
 }
 
 
