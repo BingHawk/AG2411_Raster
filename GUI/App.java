@@ -20,6 +20,7 @@ public class App extends JFrame{
     public static MapPanel mPanel;
     public static final Font H1 = new Font("Sans", Font.BOLD, 16);
     public static final Font H2 = new Font("Sans", Font.BOLD, 14);
+    public static int zoomLvl = 4;
     public static App app;
 
     public App(){
@@ -63,7 +64,17 @@ public class App extends JFrame{
         app.add(mPanel);
         app.revalidate();
     }
-    
+
+    public static void zoom(int change){
+        if (mPanel != null){
+            zoomLvl = zoomLvl+ change;
+            mPanel.scale = zoomLvl;
+            mPanel.revalidate();
+            mPanel.repaint();
+            System.out.println("zoom triggered, new zoom lvl = "+zoomLvl);
+
+        } //TODO: add dialog "no layer loaded";
+    }
 
     public static void main(String[] args){
         app = new App();
