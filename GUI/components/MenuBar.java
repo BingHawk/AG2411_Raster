@@ -6,6 +6,9 @@ import GUI.App;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 
 public class MenuBar extends JPanel
@@ -63,6 +66,16 @@ public class MenuBar extends JPanel
             showMenu.show(this, 90, HEIGHT);
 
         } else if (HELP.equals(cmd)) { // third button clicked
+            URI helplink;
+            try {
+                helplink = new URI("https://mobfest.se/Help.html"); //Mac specific. 
+                openWebpage(helplink);
+
+            } catch (URISyntaxException e1) {
+                // TODO Add dialog saying something is wrong
+                e1.printStackTrace();
+            }
+            
 
         } else if (ZOOM_IN.equals(cmd)){
             App.zoom(1);
@@ -73,4 +86,27 @@ public class MenuBar extends JPanel
         }
  
     }
+
+    public static boolean openWebpage(URI uri) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(uri);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+    
+    public static boolean openWebpage(URL url) {
+        try {
+            return openWebpage(url.toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
