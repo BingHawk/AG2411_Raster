@@ -495,7 +495,12 @@ public class Layer {
 
         for (int i = 0; i < nRows; i++) { 
             for (int j = 0; j < nCols; j++) {
-                outLayer.values[i][j] = values[i][j] / inLayer.values[i][j];
+                if (inLayer.values[i][j] == 0){
+                    outLayer.values[i][j] = nullValue;
+                } else {
+                    outLayer.values[i][j] = values[i][j] / inLayer.values[i][j];
+
+                }
                 
                 // set cell in outlayer to nullvalue if any of the inlayers include nullvalue.
                 if (values[i][j] == nullValue || inLayer.values[i][j] == nullValue)
