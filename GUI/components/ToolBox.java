@@ -20,7 +20,10 @@ public class ToolBox extends JToolBar
                      implements ActionListener{
     static final public Color BG = new Color(210,210,210);                    
     static final public String ZONAL_MIN = "zonal min";
+    static final public String ZONAL_MAX = "zonal max";
+    static final public String ZONAL_AVERAGE = "zonal average";
     static final public String SLOPE = "slope";
+    static final public String ASPECT = "aspect";
     static final public String LOCAL_SUM = "local sum";
     static final public String LOCAL_DIFF = "local difference";
     static final public String LOCAL_DIV = "local division";
@@ -35,7 +38,10 @@ public class ToolBox extends JToolBar
 
         //Create buttons for the tool here
         JButton zonalMin = makeToolButton(ZONAL_MIN, "zonal minimum");
+        JButton zonalMax = makeToolButton(ZONAL_MAX, "zonal maximum");
+        JButton zonalAverage = makeToolButton(ZONAL_AVERAGE, "zonal average");
         JButton slope = makeToolButton(SLOPE, "Slope");
+        JButton aspect = makeToolButton(ASPECT, "Aspect");
         JButton localSum = makeToolButton(LOCAL_SUM, "Local Sum");
         JButton localDiff = makeToolButton(LOCAL_DIFF, "Local Difference");
         JButton localDiv = makeToolButton(LOCAL_DIV, "Local Division");
@@ -57,6 +63,8 @@ public class ToolBox extends JToolBar
         add(headerZonal);
         //Add zonal tools here
         add(zonalMin);
+        add(zonalMax);
+        add(zonalAverage);
         add(headerFocal);
         //Add Focal tools here
         add(slope);
