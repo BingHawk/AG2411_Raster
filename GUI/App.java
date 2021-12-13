@@ -61,7 +61,7 @@ public class App extends JFrame{
         System.out.println("render triggered");
         mPanel = new MapPanel(image, scale);
 
-        app.add(mPanel);
+        app.add(mPanel, BorderLayout.CENTER);
         app.revalidate();
     }
 

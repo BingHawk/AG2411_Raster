@@ -4,9 +4,13 @@ package ag2411.network;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.io.FileWriter;   // Import the FileWriter class
 import java.io.IOException;
+import java.util.PriorityQueue;
 
 
 public class Network {
@@ -143,6 +147,65 @@ public class Network {
             for (Arc arc: node.outArcs) {
                 System.out.println("\t"+arc.name+"\t"+arc.tail.name+"\t\t"+arc.head.name+"\t\t"+arc.weight);
             }
+        }
+    }
+
+    private Node findSmallestNode(List<Node> nodeList) {
+        Node smallestNode =  nodeList.get(0); //Initialize to first node in list
+        for(Node iterNode : nodeList){ //go through everything in list
+            if (iterNode.value < smallestNode.value){
+                smallestNode = iterNode;
+
+            }
+        }
+
+        return smallestNode;
+    }
+    
+    public void djikstra(Node fromNode){
+        // Set the value(representing shortest path distance) of origin to 0
+        fromNode.value= 0;
+        // Create a set of nodes, called tempNodes,whose shortest path distances 
+        // are not permanently determined. Initially, this set contains all nodes.
+        
+        PriorityQueue<Node> tempNodes = new PriorityQueue<Node>(new NodeComparator());
+        for(String nodeName: nodeMap.keySet()) {
+            tempNodes.add(nodeMap.get(nodeName));
+        }
+        // Perform Dijkstra
+        while(!tempNodes.isEmpty()) { 
+            // repeat until all nodes become permanent
+
+            // Find a node with minimum value in tempNodes
+            // Remove the minimum-value node from tempNodes
+            Node smallestNode = tempNodes.poll();
+
+            // Update the value of each node that is adjacent to the minimum-weight node
+            for (Arc outArc : smallestNode.outArcs){
+                Double testValue = smallestNode.value + outArc.weight;
+                if (outArc.head.value > testValue){
+                    outArc.head.value = testValue;
+                }
+            }
+        }
+        // Assign1 to all arcs in the shortest path treeand0 to all otherarcs.
+    }
+
+    public void djikstra(Node fromNode, Node toNode){
+        
+    }
+}
+
+class NodeComparator implements Comparator<Node>{
+
+    @Override
+    public int compare(Node n1, Node n2){
+        if(n1.value < n2.value){
+            return -1;
+        } else if (n1.value < n2.value){
+            return 1;
+        } else {
+            return 0;
         }
     }
 }
