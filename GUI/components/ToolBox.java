@@ -68,7 +68,6 @@ public class ToolBox extends JToolBar
         add(headerFocal);
         //Add Focal tools here
         add(slope);
-        add(aspect);
         add(headerLocal);
         //Add Local tools here
         add(localSum);

@@ -146,9 +146,6 @@ public class ToolDialog extends JFrame
         add(panel);
         pack();
 
-        
-
-
     }
 
     @Override
@@ -189,7 +186,6 @@ public class ToolDialog extends JFrame
                             outLayer.save(saveFile.getAbsolutePath());
                         }
                     } //TODO: add dialog "no layer loaded";
-                
                 case ToolBox.ZONAL_MIN:
                     if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
                         outLayer = inLayer1.zonalMin(inLayer2, outName); //Add the call to the correct Layer method here. 
@@ -205,23 +201,26 @@ public class ToolDialog extends JFrame
                     if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
                         outLayer = inLayer1.zonalMax(inLayer2, outName); //Add the call to the correct Layer method here. 
                         App.dispLayers.add(outLayer); //Ads the layer to the cataloge
-                        
+               
                         if(saveFile == null){ //Check if there is a specified savespace. Otherwise uses default. 
                             outLayer.save("data/output/"+outName+".txt");
                         } else {
                         outLayer.save(saveFile.getAbsolutePath());
-                        }          
+                        }  
+  
                     } //TODO: add dialog "no layer loaded";
-                case ToolBox.ZONAL_AVERAGE:
+                
+                case ToolBox.ZONAL_AVERAGE:  
                     if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
                         outLayer = inLayer1.zonalAvg(inLayer2, outName); //Add the call to the correct Layer method here. 
                         App.dispLayers.add(outLayer); //Ads the layer to the cataloge
-                        
+               
                         if(saveFile == null){ //Check if there is a specified savespace. Otherwise uses default. 
                             outLayer.save("data/output/"+outName+".txt");
                         } else {
                         outLayer.save(saveFile.getAbsolutePath());
-                        }          
+                        }  
+  
                     } //TODO: add dialog "no layer loaded";
                 case ToolBox.LOCAL_SUM:
                     if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
@@ -242,7 +241,7 @@ public class ToolDialog extends JFrame
                             outLayer.save("data/output/"+outName+".txt");
                         } else {
                         outLayer.save(saveFile.getAbsolutePath());
-                        }     
+                        }
                 } //TODO: add dialog "no layer loaded";
 
                 case ToolBox.LOCAL_DIV:
