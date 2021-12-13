@@ -19,15 +19,15 @@ import java.awt.event.ActionListener;
 public class ToolBox extends JToolBar
                      implements ActionListener{
     static final public Color BG = new Color(210,210,210);                    
-    static final public String ZONAL_MIN = "zonal min";
-    static final public String ZONAL_MAX = "zonal max";
-    static final public String ZONAL_AVERAGE = "zonal average";
+    static final public String ZONAL_MIN = "zonalMin";
+    static final public String ZONAL_MAX = "zonalMax";
+    static final public String ZONAL_AVERAGE = "zonalAverage";
     static final public String SLOPE = "slope";
     static final public String ASPECT = "aspect";
-    static final public String LOCAL_SUM = "local sum";
-    static final public String LOCAL_DIFF = "local difference";
-    static final public String LOCAL_DIV = "local division";
-    static final public String LOCAL_PROD = "local product";
+    static final public String LOCAL_SUM = "localSum";
+    static final public String LOCAL_DIFF = "localDifference";
+    static final public String LOCAL_DIV = "localDivision";
+    static final public String LOCAL_PROD = "localProduct";
 
 
     public ToolBox(){
@@ -68,6 +68,7 @@ public class ToolBox extends JToolBar
         add(headerFocal);
         //Add Focal tools here
         add(slope);
+        add(aspect);
         add(headerLocal);
         //Add Local tools here
         add(localSum);

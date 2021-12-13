@@ -323,6 +323,7 @@ public class Layer {
         
         // Check if minMax is calculated:
         if (minMax[0] == Double.POSITIVE_INFINITY && minMax[1] == Double.NEGATIVE_INFINITY){
+            System.out.println("GetMinMax is run");
             getMinMax();
         }
 
@@ -584,7 +585,6 @@ public class Layer {
 
         //writing values to new layer
         Layer outLayer = new Layer(outLayerName, nRows, nCols, origin, resolution, nullValue);
-        System.out.println(smallest);
         for(int i = 0; i< nRows; i++){
             for (int j = 0;j<nCols; j++){
                 //System.out.println(zoneLayer.values[i][j]);
