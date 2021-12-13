@@ -150,20 +150,9 @@ public class Network {
             }
         }
     }
-
-    private Node findSmallestNode(List<Node> nodeList) {
-        Node smallestNode =  nodeList.get(0); //Initialize to first node in list
-        for(Node iterNode : nodeList){ //go through everything in list
-            if (iterNode.value < smallestNode.value){
-                smallestNode = iterNode;
-
-            }
-        }
-
-        return smallestNode;
-    }
     
     public void djikstra(Node fromNode){
+
         // Set the value(representing shortest path distance) of origin to 0
         fromNode.value= 0;
         // Create a set of nodes, called tempNodes,whose shortest path distances 
@@ -181,9 +170,7 @@ public class Network {
             // Find a node with minimum value in tempNodes
             // Remove the minimum-value node from tempNodes
             Node smallestNode = tempNodes.poll();
-
-            System.out.println(smallestNode.name +": "+ smallestNode.value);
-
+            
             // Update the value of each node that is adjacent to the minimum-weight node
             for (Arc outArc : smallestNode.outArcs){
                 Double testValue = smallestNode.value + outArc.weight;
@@ -195,10 +182,22 @@ public class Network {
                     tempNodes.remove(outArc.head);
                     tempNodes.add(outArc.head);
                 }
+                if (outArc.head.prevNode != null){
+                    outArc.weight = 1;
+                } else {
+                    outArc.weight = 0;
+                }
             }
         }
 
         // Assign1 to all arcs in the shortest path treeand0 to all otherarcs.
+    }
+
+    public void djikstra(Node fromNode, Node toNode){
+        System.out.println("Djikstra with two inputs");
+        djikstra(fromNode);
+        clearArcWeights();
+        trace(toNode);   
     }
 
     public List<Node> getPathAsNodes(Node fromNode, Node toNode){
@@ -226,9 +225,25 @@ public class Network {
         return path;
     }
 
-    public void trace(Node fromNode, Node toNode){
-
+//Removes all weights from all nodes in the network. 
+    private void clearArcWeights(){
+        Node tempNode;
+        for (String nodeName : nodeMap.keySet()){
+            tempNode = nodeMap.get(nodeName);
+            for (Arc outArc : tempNode.outArcs){
+                outArc.weight = 0;
+            }
+        }
     }
+
+    private void trace(Node n) {
+        Arc a = n.prevArc;
+        while(a != null) {
+            a.weight = 1;
+            a = a.tail.prevArc;
+        }
+    }
+
 }
 
 class NodeComparator implements Comparator<Node>{

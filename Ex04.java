@@ -17,10 +17,10 @@ public class Ex04 {
 		// args[1] : name of an out put file 
 		Network testNetwork = new Network("test",args[0]);
 		testNetwork.djikstra(testNetwork.nodeMap.get("1"));
-		//testNetwork.printNodes();
-		//System.out.println();
-		//testNetwork.printArcs();
-		//testNetwork.save(args[1]);
+		testNetwork.printNodes();
+		System.out.println();
+		testNetwork.printArcs();
+		testNetwork.save(args[1]);
 	}
 
 }
