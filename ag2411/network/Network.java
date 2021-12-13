@@ -15,7 +15,8 @@ import java.util.PriorityQueue;
 
 public class Network {
     String name; 
-    HashMap<String,Node> nodeMap;
+    public HashMap<String,Node> nodeMap;
+    public HashMap<String,Node> usedArcs;
 
     // Constructor
     public Network(String name, String inputFileName) {
@@ -168,6 +169,7 @@ public class Network {
         // Create a set of nodes, called tempNodes,whose shortest path distances 
         // are not permanently determined. Initially, this set contains all nodes.
         
+        //Faster implementation. 
         PriorityQueue<Node> tempNodes = new PriorityQueue<Node>(new NodeComparator());
         for(String nodeName: nodeMap.keySet()) {
             tempNodes.add(nodeMap.get(nodeName));
@@ -180,19 +182,52 @@ public class Network {
             // Remove the minimum-value node from tempNodes
             Node smallestNode = tempNodes.poll();
 
+            System.out.println(smallestNode.name +": "+ smallestNode.value);
+
             // Update the value of each node that is adjacent to the minimum-weight node
             for (Arc outArc : smallestNode.outArcs){
                 Double testValue = smallestNode.value + outArc.weight;
                 if (outArc.head.value > testValue){
                     outArc.head.value = testValue;
+                    outArc.head.prevNode = smallestNode;
+                    outArc.head.prevArc = outArc;
+                    //Update priorityQueue
+                    tempNodes.remove(outArc.head);
+                    tempNodes.add(outArc.head);
                 }
             }
         }
+
         // Assign1 to all arcs in the shortest path treeand0 to all otherarcs.
     }
 
-    public void djikstra(Node fromNode, Node toNode){
-        
+    public List<Node> getPathAsNodes(Node fromNode, Node toNode){
+        djikstra(fromNode);
+        List<Node> path = new ArrayList<Node>();
+        Node currentNode = toNode;
+        while(currentNode != null){
+            path.add(currentNode);
+            currentNode = currentNode.prevNode;
+        }
+        return path;
+    }
+
+    public List<Arc> getPathAsArcs(Node fromNode, Node toNode){
+        djikstra(fromNode);
+
+        List<Arc> path = new ArrayList<Arc>();
+
+        Node currentNode = toNode;
+        while(currentNode != null){
+            path.add(currentNode.prevArc);
+            currentNode = currentNode.prevNode;
+        }
+
+        return path;
+    }
+
+    public void trace(Node fromNode, Node toNode){
+
     }
 }
 
