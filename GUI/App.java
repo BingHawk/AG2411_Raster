@@ -20,8 +20,8 @@ public class App extends JFrame{
     public static MapPanel mPanel;
     public static final Font H1 = new Font("Sans", Font.BOLD, 16);
     public static final Font H2 = new Font("Sans", Font.BOLD, 14);
-    public static App app;
     public static int zoomLvl = 4;
+    public static App app;
 
     public App(){
         super();
@@ -57,11 +57,11 @@ public class App extends JFrame{
     }
 
     //Renders an image in APP:
-    public static void render(BufferedImage image){
+    public static void render(BufferedImage image, int scale){
         System.out.println("render triggered");
-        mPanel = new MapPanel(image, zoomLvl);
+        mPanel = new MapPanel(image, scale);
 
-        app.add(mPanel);
+        app.add(mPanel, BorderLayout.CENTER);
         app.revalidate();
     }
 
@@ -75,7 +75,6 @@ public class App extends JFrame{
 
         } //TODO: add dialog "no layer loaded";
     }
-    
 
     public static void main(String[] args){
         app = new App();
