@@ -68,7 +68,7 @@ public class MenuBar extends JPanel
         } else if (HELP.equals(cmd)) { // third button clicked
             URI helplink;
             try {
-                helplink = new URI("https://mobfest.se/Help.html"); //Mac specific. 
+                helplink = new URI("https://mobfest.se/Help.html");
                 openWebpage(helplink);
 
             } catch (URISyntaxException e1) {

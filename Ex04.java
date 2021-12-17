@@ -16,6 +16,7 @@ public class Ex04 {
 		// args[0] : name of an input file
 		// args[1] : name of an out put file 
 		Network testNetwork = new Network("test",args[0]);
+		testNetwork.djikstra(testNetwork.nodeMap.get("1"));
 		testNetwork.printNodes();
 		System.out.println();
 		testNetwork.printArcs();
