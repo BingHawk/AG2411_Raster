@@ -1,20 +1,21 @@
 package GUI.components;
 
 import javax.swing.*;
+
+import GUI.App;
+
 import java.awt.*;
 import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import ag2411.mapalgebra.*;
-import GUI.*;
 
 public class Catalogue extends JToolBar
                        implements ActionListener{
     static final public Color BG = new Color(210,210,210);  
     //static final public Color BG2 = new Color(10,10,210);  
     static public ButtonGroup bGroup;                  
-
 
     public Catalogue(){
         super();
@@ -50,9 +51,7 @@ public class Catalogue extends JToolBar
                 */
             }
             revalidate();
-
         }
-
     }
 
     private boolean buttonInGroup(String ButtonText, ButtonGroup bg){
@@ -73,14 +72,7 @@ public class Catalogue extends JToolBar
         String cmd = e.getActionCommand();
         for(Layer l: App.dispLayers){
             if(cmd.equals(l.name)){
-                //TODO: Dynamically set scale to make map fill screen
-
-                //Printing to console to search for errors
-                /*
-                System.out.print("outLayer before render");
-                l.print();
-                */
-                App.render(l.toImage(),4);
+                App.render(l.toImage(),App.zoomLvl);
                 App.mPanel.setVisible(true);
             }
         }
