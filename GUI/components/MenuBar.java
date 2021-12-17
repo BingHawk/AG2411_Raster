@@ -82,7 +82,14 @@ public class MenuBar extends JPanel
         } else if (ZOOM_OUT.equals(cmd)){
             if (App.zoomLvl > 1){
                 App.zoom(-1);
-            } //TODO: add dialog cannot zoom to less than zero.
+            } else {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Unable to preform action: Att minimum zoom level",
+                    "Min Zoom reached",
+                    JOptionPane.OK_OPTION
+                );
+            }
         }
  
     }
