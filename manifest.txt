@@ -1,0 +1,2 @@
+Main-Class: GUI.App
+Class-Path: yourlib.jar

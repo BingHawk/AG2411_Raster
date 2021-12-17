@@ -287,6 +287,15 @@ public class Layer {
     public void save(String location){
         try {
             File writeFile = new File(location);
+
+
+        /*
+            Boolean newDir = writeFile.mkdirs();
+            System.out.print("Directory created: " + newDir);
+
+            if (!Files.exists(Paths.get(location))){
+            } 
+        */
             if (writeFile.createNewFile()) {
               System.out.println("File created: " + writeFile.getName());
             } else {
