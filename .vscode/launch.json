@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Ex04",
+            "request": "launch",
+            "mainClass": "Ex04",
+            "projectName": "AG2411_Raster_7d2108a9"
+        },
+        {
+            "type": "java",
             "name": "Launch ToolBarDemo",
             "request": "launch",
             "mainClass": "GUI.components.ToolBarDemo",

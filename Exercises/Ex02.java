@@ -1,6 +1,5 @@
 package Exercises;
 
-
 import javax.swing.JFrame;
 
 import ag2411.mapalgebra.Layer;
