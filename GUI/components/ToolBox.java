@@ -28,6 +28,7 @@ public class ToolBox extends JToolBar
     static final public String LOCAL_DIFF = "localDifference";
     static final public String LOCAL_DIV = "localDivision";
     static final public String LOCAL_PROD = "localProduct";
+    static final public String UNIFORM_LAYER = "newUniformLayer";
 
 
     public ToolBox(){
@@ -46,6 +47,7 @@ public class ToolBox extends JToolBar
         JButton localDiff = makeToolButton(LOCAL_DIFF, "Local Difference");
         JButton localDiv = makeToolButton(LOCAL_DIV, "Local Division");
         JButton localProd = makeToolButton(LOCAL_PROD, "Local Product");
+        JButton newLayer = makeToolButton(UNIFORM_LAYER, "Create uniform layer");
 
         JLabel header = new JLabel("Tool box");
         header.setFont(App.H1);
@@ -57,6 +59,10 @@ public class ToolBox extends JToolBar
         headerLocal.setFont(App.H2);
         JLabel headerNetwork = new JLabel("==Network Operations==");
         headerNetwork.setFont(App.H2);
+        JLabel headerCreate = new JLabel("==Create Layer==");
+        headerCreate.setFont(App.H2);
+
+
 
 
         add(header);
@@ -77,6 +83,8 @@ public class ToolBox extends JToolBar
         add(localProd);
         add(headerNetwork);
         //Add network tools here
+        add(headerCreate);
+        add(newLayer);
     }
 
     protected JButton makeToolButton(String actionCommand, String name) {
