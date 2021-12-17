@@ -73,7 +73,14 @@ public class App extends JFrame{
             mPanel.repaint();
             System.out.println("zoom triggered, new zoom lvl = "+zoomLvl);
 
-        } //TODO: add dialog "no layer loaded";
+        } else {
+            JOptionPane.showMessageDialog(
+                app,
+                "Unable to preform action: no layer loaded",
+                "No Layer",
+                JOptionPane.OK_OPTION
+            );
+        }
     }
 
     public static void main(String[] args){

@@ -177,111 +177,117 @@ public class ToolDialog extends JFrame
         if(cmd.equals(OK)){
             System.out.println("ok is pressed");
 
-            String outName;
-            if(saveFile == null){
-                outName = inLayer1.name + "_" + OPERATION;
+            if(inLayer1 == null){
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Unable to preform action: no layer loaded",
+                    "No Layer",
+                    JOptionPane.OK_OPTION
+                );
             } else {
-                String[] name = saveFile.getName().split("[.]", 0);
-                outName = name[0];
-            }
+                String outName;
+                if(saveFile == null){
+                    outName = inLayer1.name + "_" + OPERATION;
+                } else {
+                    String[] name = saveFile.getName().split("[.]", 0);
+                    outName = name[0];
+                }
 
-            if(saveFile == null){
-                File saveDir = new File(defaultSavePath);
-                Boolean newDir = saveDir.mkdirs();
-                System.out.println("Directory created: " + newDir);
+                if(saveFile == null){
+                    File saveDir = new File(defaultSavePath);
+                    Boolean newDir = saveDir.mkdirs();
+                    System.out.println("Directory created: " + newDir);
 
-                saveFile = new File(defaultSavePath+outName+".txt");
+                    saveFile = new File(defaultSavePath+outName+".txt");
+                }
 
-            }
+                Layer outLayer;
+                switch(OPERATION){
+                    case ToolBox.SLOPE: 
+                        if(inLayer1 != null){
+                            outLayer = inLayer1.focalSlope(outName);
+                            App.dispLayers.add(outLayer);
+                            outLayer.save(saveFile.getAbsolutePath());
+                        }
+                        break;
+                    case ToolBox.ASPECT: 
+                        System.out.println(ToolBox.ASPECT + "is run");
 
-            Layer outLayer;
-            switch(OPERATION){
-                case ToolBox.SLOPE: 
-                    if(inLayer1 != null){
-                        outLayer = inLayer1.focalSlope(outName);
-                        App.dispLayers.add(outLayer);
-                        outLayer.save(saveFile.getAbsolutePath());
-                    } 
-                    //TODO: add dialog "no layer loaded";
-                    break;
-                case ToolBox.ASPECT: 
-                    System.out.println(ToolBox.ASPECT + "is run");
-
-                    if(inLayer1 != null){
-                        outLayer = inLayer1.focalAspect(outName);
-                        App.dispLayers.add(outLayer);
-                        outLayer.save(saveFile.getAbsolutePath());
-                    } //TODO: add dialog "no layer loaded";
-                    break;
-                case ToolBox.ZONAL_MIN:
-                    if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
-                        outLayer = inLayer1.zonalMin(inLayer2, outName); //Add the call to the correct Layer method here. 
-                        App.dispLayers.add(outLayer); //Ads the layer to the cataloge
-                        outLayer.save(saveFile.getAbsolutePath());        
-                    } //TODO: add dialog "no layer loaded";
-                    break;
-                case ToolBox.ZONAL_MAX:   
-                    System.out.println(ToolBox.ZONAL_MAX + "is run");
-
-                    if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
-                        outLayer = inLayer1.zonalMax(inLayer2, outName); //Add the call to the correct Layer method here. 
-                        App.dispLayers.add(outLayer); //Ads the layer to the cataloge
-                        outLayer.save(saveFile.getAbsolutePath());  
-                    } 
-                    //TODO: add dialog "no layer loaded";
-                    break;
-                case ToolBox.ZONAL_AVERAGE:  
-                System.out.println(ToolBox.ZONAL_AVERAGE + "is run");
-
-                    if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
-                        outLayer = inLayer1.zonalAvg(inLayer2, outName); //Add the call to the correct Layer method here. 
-                        App.dispLayers.add(outLayer); //Ads the layer to the cataloge
-                        outLayer.save(saveFile.getAbsolutePath());
-                    } //TODO: add dialog "no layer loaded";
-                    break;
-                case ToolBox.LOCAL_SUM:
-                    System.out.println(ToolBox.LOCAL_SUM + "is run");
-
+                        if(inLayer1 != null){
+                            outLayer = inLayer1.focalAspect(outName);
+                            App.dispLayers.add(outLayer);
+                            outLayer.save(saveFile.getAbsolutePath());
+                        }
+                        break;
+                    case ToolBox.ZONAL_MIN:
                         if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
-                            outLayer = inLayer1.localSum(inLayer2, outName); //Add the call to the correct Layer method here. 
+                            outLayer = inLayer1.zonalMin(inLayer2, outName); //Add the call to the correct Layer method here. 
                             App.dispLayers.add(outLayer); //Ads the layer to the cataloge
-                            outLayer.save(saveFile.getAbsolutePath());      
-                    } //TODO: add dialog "no layer loaded";
-                    break;
-                case ToolBox.LOCAL_DIFF:
-                    System.out.println(ToolBox.LOCAL_DIFF + "is run");
+                            outLayer.save(saveFile.getAbsolutePath());        
+                        }
+                        break;
+                    case ToolBox.ZONAL_MAX:   
+                        System.out.println(ToolBox.ZONAL_MAX + "is run");
 
                         if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
-                            outLayer = inLayer1.localDifference(inLayer2, outName); //Add the call to the correct Layer method here. 
+                            outLayer = inLayer1.zonalMax(inLayer2, outName); //Add the call to the correct Layer method here. 
+                            App.dispLayers.add(outLayer); //Ads the layer to the cataloge
+                            outLayer.save(saveFile.getAbsolutePath());  
+                        } 
+                        break;
+                    case ToolBox.ZONAL_AVERAGE:  
+                    System.out.println(ToolBox.ZONAL_AVERAGE + "is run");
+
+                        if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
+                            outLayer = inLayer1.zonalAvg(inLayer2, outName); //Add the call to the correct Layer method here. 
                             App.dispLayers.add(outLayer); //Ads the layer to the cataloge
                             outLayer.save(saveFile.getAbsolutePath());
-                    } //TODO: add dialog "no layer loaded";
-                    break;
-                case ToolBox.LOCAL_DIV:
-                    System.out.println(ToolBox.LOCAL_DIV + "is run");
+                        }
+                        break;
+                    case ToolBox.LOCAL_SUM:
+                        System.out.println(ToolBox.LOCAL_SUM + "is run");
 
-                        if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
-                            outLayer = inLayer1.localDivision(inLayer2, outName); //Add the call to the correct Layer method here. 
-                            App.dispLayers.add(outLayer); //Ads the layer to the cataloge
-                            outLayer.save(saveFile.getAbsolutePath());   
-                    } //TODO: add dialog "no layer loaded";
-                    break;
-                case ToolBox.LOCAL_PROD:
-                    System.out.println(ToolBox.LOCAL_PROD + "is run");
+                            if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
+                                outLayer = inLayer1.localSum(inLayer2, outName); //Add the call to the correct Layer method here. 
+                                App.dispLayers.add(outLayer); //Ads the layer to the cataloge
+                                outLayer.save(saveFile.getAbsolutePath());      
+                        }
+                        break;
+                    case ToolBox.LOCAL_DIFF:
+                        System.out.println(ToolBox.LOCAL_DIFF + "is run");
 
-                        if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
-                            outLayer = inLayer1.localProduct(inLayer2, outName); //Add the call to the correct Layer method here. 
-                            App.dispLayers.add(outLayer); //Ads the layer to the cataloge
-                            outLayer.save(saveFile.getAbsolutePath());   
-                    } //TODO: add dialog "no layer loaded";
-                    break;
-                //Add new case here
-                }
-            
-            App.catalogue.updateCatalogue();
+                            if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
+                                outLayer = inLayer1.localDifference(inLayer2, outName); //Add the call to the correct Layer method here. 
+                                App.dispLayers.add(outLayer); //Ads the layer to the cataloge
+                                outLayer.save(saveFile.getAbsolutePath());
+                        }
+                        break;
+                    case ToolBox.LOCAL_DIV:
+                        System.out.println(ToolBox.LOCAL_DIV + "is run");
 
-            JFrame window = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, panel);
-            window.dispose();
+                            if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
+                                outLayer = inLayer1.localDivision(inLayer2, outName); //Add the call to the correct Layer method here. 
+                                App.dispLayers.add(outLayer); //Ads the layer to the cataloge
+                                outLayer.save(saveFile.getAbsolutePath());   
+                        }
+                        break;
+                    case ToolBox.LOCAL_PROD:
+                        System.out.println(ToolBox.LOCAL_PROD + "is run");
+
+                            if(inLayer1 != null && inLayer2 != null){ //checks that the layers have been added. 
+                                outLayer = inLayer1.localProduct(inLayer2, outName); //Add the call to the correct Layer method here. 
+                                App.dispLayers.add(outLayer); //Ads the layer to the cataloge
+                                outLayer.save(saveFile.getAbsolutePath());   
+                        }
+                        break;
+                    //Add new case here
+                    }
+                
+                App.catalogue.updateCatalogue();
+
+                JFrame window = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, panel);
+                window.dispose();
+            }
 
         } else if (cmd.equals(CANCEL)){
             JFrame window = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, panel);
@@ -307,7 +313,7 @@ public class ToolDialog extends JFrame
 
                 input1.setText("\nInput file: "+file.getName());
 
-            }
+            }            
         } else if(cmd.equals(CHOOSE_FILE2)){
             JFileChooser fc = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
