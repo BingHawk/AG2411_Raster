@@ -1,3 +1,4 @@
+package Exercises;
 // AG2412|GIS Architectures and Algorithms 
 // Ex03:Implementing Map Algebraic Operations
 //-------------------------------------------------

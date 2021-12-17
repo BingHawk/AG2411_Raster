@@ -1,3 +1,4 @@
+package Exercises;
 import ag2411.mapalgebra.*;
 import java.awt.*;
 import javax.swing.*;
