@@ -19,8 +19,15 @@ import java.awt.event.ActionListener;
 public class ToolBox extends JToolBar
                      implements ActionListener{
     static final public Color BG = new Color(210,210,210);                    
-    static final public String ZONAL_MIN = "zonal min";
+    static final public String ZONAL_MIN = "zonalMin";
+    static final public String ZONAL_MAX = "zonalMax";
+    static final public String ZONAL_AVERAGE = "zonalAverage";
     static final public String SLOPE = "slope";
+    static final public String ASPECT = "aspect";
+    static final public String LOCAL_SUM = "localSum";
+    static final public String LOCAL_DIFF = "localDifference";
+    static final public String LOCAL_DIV = "localDivision";
+    static final public String LOCAL_PROD = "localProduct";
 
 
     public ToolBox(){
@@ -31,7 +38,14 @@ public class ToolBox extends JToolBar
 
         //Create buttons for the tool here
         JButton zonalMin = makeToolButton(ZONAL_MIN, "zonal minimum");
+        JButton zonalMax = makeToolButton(ZONAL_MAX, "zonal maximum");
+        JButton zonalAverage = makeToolButton(ZONAL_AVERAGE, "zonal average");
         JButton slope = makeToolButton(SLOPE, "Slope");
+        JButton aspect = makeToolButton(ASPECT, "Aspect");
+        JButton localSum = makeToolButton(LOCAL_SUM, "Local Sum");
+        JButton localDiff = makeToolButton(LOCAL_DIFF, "Local Difference");
+        JButton localDiv = makeToolButton(LOCAL_DIV, "Local Division");
+        JButton localProd = makeToolButton(LOCAL_PROD, "Local Product");
 
         JLabel header = new JLabel("Tool box");
         header.setFont(App.H1);
@@ -49,11 +63,18 @@ public class ToolBox extends JToolBar
         add(headerZonal);
         //Add zonal tools here
         add(zonalMin);
+        add(zonalMax);
+        add(zonalAverage);
         add(headerFocal);
         //Add Focal tools here
         add(slope);
+        add(aspect);
         add(headerLocal);
         //Add Local tools here
+        add(localSum);
+        add(localDiff);
+        add(localDiv);
+        add(localProd);
         add(headerNetwork);
         //Add network tools here
     }

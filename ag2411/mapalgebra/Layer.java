@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;  // class to handle errors
 import java.io.FileWriter;   // Import the FileWriter class
 import java.io.IOException;
 import java.lang.Math;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.Map;
@@ -287,6 +289,15 @@ public class Layer {
     public void save(String location){
         try {
             File writeFile = new File(location);
+
+
+        /*
+            Boolean newDir = writeFile.mkdirs();
+            System.out.print("Directory created: " + newDir);
+            
+            if (!Files.exists(Paths.get(location))){
+            } 
+        */
             if (writeFile.createNewFile()) {
               System.out.println("File created: " + writeFile.getName());
             } else {

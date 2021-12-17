@@ -1,3 +1,4 @@
+package Exercises;
 import ag2411.mapalgebra.Layer;
 public class Ex01 {
     public static void main(String[] args) {

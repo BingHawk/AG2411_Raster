@@ -1,20 +1,21 @@
 package GUI.components;
 
 import javax.swing.*;
+
+import GUI.App;
+
 import java.awt.*;
 import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import ag2411.mapalgebra.*;
-import GUI.*;
 
 public class Catalogue extends JToolBar
                        implements ActionListener{
     static final public Color BG = new Color(210,210,210);  
     //static final public Color BG2 = new Color(10,10,210);  
     static public ButtonGroup bGroup;                  
-
 
     public Catalogue(){
         super();
