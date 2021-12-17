@@ -72,7 +72,7 @@ public class Catalogue extends JToolBar
         String cmd = e.getActionCommand();
         for(Layer l: App.dispLayers){
             if(cmd.equals(l.name)){
-                App.render(l.toImage());
+                App.render(l.toImage(),App.zoomLvl);
                 App.mPanel.setVisible(true);
             }
         }
