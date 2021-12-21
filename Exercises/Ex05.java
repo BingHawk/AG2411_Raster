@@ -4,9 +4,9 @@ import ag2411.network.*;
 public class Ex05 {
 
     //run with:
-	//java Ex04.java data/test/smallnetwork.txt data/output/networkOutput.txt 1
+	//java Exercises/Ex04.java data/test/smallnetwork.txt data/output/networkOutput.txt 1
     //or
-    //java Ex04.java data/test/smallnetwork.txt data/output/networkOutput.txt 1 4
+    //java Exercises/Ex04.java data/test/smallnetwork.txt data/output/networkOutput.txt 1 4
 
     public static void main(String[] args){
 
