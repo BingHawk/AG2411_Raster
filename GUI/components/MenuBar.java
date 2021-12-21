@@ -36,7 +36,7 @@ public class MenuBar extends JPanel
         JButton zoomOut = createMenueButton("Zoom out",ZOOM_OUT);
 
         add(fileButton);
-        add(showButton);
+        //add(showButton); //Showbutton not implemented for version 1. 
         add(helpButton);
         add(zoomIn);
         add(zoomOut);

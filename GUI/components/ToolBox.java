@@ -51,15 +51,15 @@ public class ToolBox extends JToolBar
 
         JLabel header = new JLabel("Tool box");
         header.setFont(App.H1);
-        JLabel headerZonal = new JLabel("==Zonal Operations==");
+        JLabel headerZonal = new JLabel("Zonal Operations");
         headerZonal.setFont(App.H2);
-        JLabel headerFocal = new JLabel("==Focal Operations==");
+        JLabel headerFocal = new JLabel("Focal Operations");
         headerFocal.setFont(App.H2);
-        JLabel headerLocal = new JLabel("==Local Operations==");
+        JLabel headerLocal = new JLabel("Local Operations");
         headerLocal.setFont(App.H2);
-        JLabel headerNetwork = new JLabel("==Network Operations==");
+        JLabel headerNetwork = new JLabel("Network Operations");
         headerNetwork.setFont(App.H2);
-        JLabel headerCreate = new JLabel("==Create Layer==");
+        JLabel headerCreate = new JLabel("Create Layer");
         headerCreate.setFont(App.H2);
 
 
@@ -81,10 +81,12 @@ public class ToolBox extends JToolBar
         add(localDiff);
         add(localDiv);
         add(localProd);
+        /*  //Network and create tools not implemented for version 1.0
         add(headerNetwork);
         //Add network tools here
         add(headerCreate);
         add(newLayer);
+        */
     }
 
     protected JButton makeToolButton(String actionCommand, String name) {
