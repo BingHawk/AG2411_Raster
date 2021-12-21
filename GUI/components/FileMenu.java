@@ -11,7 +11,7 @@ import ag2411.mapalgebra.*;
 public class FileMenu extends JPopupMenu
                     implements ActionListener {
 
-    private JMenuItem loadRaster, loadNetwork, save;
+    private JMenuItem loadRaster, loadNetwork, save, saveAll;
     static final private String LOADR = "Load Raster";
     static final private String LOADN = "Load Network";
     static final private String SAVEALL = "Save All";
@@ -27,24 +27,28 @@ public class FileMenu extends JPopupMenu
         loadNetwork = new JMenuItem("Load Network");
         loadNetwork.addActionListener(this);
         loadNetwork.setActionCommand(LOADN);
+        loadNetwork.setEnabled(false);
 
-        save = new JMenuItem("Save All");
-        save.addActionListener(this);
-        save.setActionCommand(SAVEALL);
+        /* //Save not used in version 1.0
+        saveAll = new JMenuItem("Save All");
+        saveAll.addActionListener(this);
+        saveAll.setActionCommand(SAVEALL);
 
         save = new JMenuItem("Save this");
         save.addActionListener(this);
         save.setActionCommand(SAVETHIS);
-
+        */ 
 
         setBackground(MenuBar.BG);
         loadRaster.setBackground(MenuBar.BG);
         loadNetwork.setBackground(MenuBar.BG);
-        save.setBackground(MenuBar.BG);
+        //save.setBackground(MenuBar.BG);
+        //saveAll.setBackground(MenuBar.BG);
 
         add(loadRaster);
         add(loadNetwork);
-        add(save);
+        //add(save);
+        //add(saveAll)
     }
 
     public void actionPerformed(ActionEvent e) {

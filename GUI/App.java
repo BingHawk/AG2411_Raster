@@ -2,13 +2,13 @@ package GUI;
 import ag2411.mapalgebra.*;
 import ag2411.network.*;
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 
 import GUI.components.Catalogue;
+import GUI.components.MapPanel;
 import GUI.components.MenuBar;
 import GUI.components.ToolBox;
-import GUI.components.MapPanel;
 
+import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.util.ArrayList;
 

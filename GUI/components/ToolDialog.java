@@ -6,13 +6,14 @@ import java.io.File;
 
 import javax.swing.*;
 import javax.swing.filechooser.*;
+
+import GUI.App;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import GUI.App;
 
 public class ToolDialog extends JFrame
                         implements ActionListener {
