@@ -41,7 +41,7 @@ public class App extends JFrame{
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = (int) screenSize.getWidth();
-        int screenHeight = (int) screenSize.getHeight(); 
+        int screenHeight = (int) screenSize.getHeight();
         Dimension dimension= new Dimension(screenWidth - 100,screenHeight - 100);
         setPreferredSize(dimension);
 
